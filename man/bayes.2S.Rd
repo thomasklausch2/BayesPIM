@@ -35,8 +35,8 @@ bayes.2S(
   conv.crit = "upper",
   kappa.prior = NULL,
   fix.k = F,
-  par.exp = T,
-  collapsed.g = F,
+  par.exp = F,
+  collapsed.g = T,
   min_effss = chains * 10
 )
 }

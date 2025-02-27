@@ -6,6 +6,8 @@
 \usage{
 get.ppd.2S(
   mod,
+  fix_Z.X = NULL,
+  fix_Z.W = NULL,
   pst.samples = 10^3,
   perc = seq(0, 1, 0.01),
   type = "x",

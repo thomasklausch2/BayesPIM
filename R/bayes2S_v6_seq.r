@@ -8,7 +8,7 @@ bayes.2S_seq = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(V
                         beta.prior.X = 4, sig.prior.X = 10, tau.w = 1, k.prior = sqrt(10), fix.sigma.X = F,
                         prev.run = NULL, dist.X = 'weibull', update.burnin = T,
                         beta.prior = 't', vanilla = F, ndraws.naive = 5e3, update.till.converge = F, ndraws.update = NULL, maxit=Inf,
-                        conv.crit = 'upper', kappa.prior = NULL, fix.k = F, par.exp=T, collapsed.g = F){
+                        conv.crit = 'upper', kappa.prior = NULL, fix.k = F, par.exp=F, collapsed.g = T){
   t0 = Sys.time()
   if(!is.numeric(maxit)) stop('maxit has to be numeric.')
   
@@ -25,6 +25,7 @@ bayes.2S_seq = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(V
     Vobs = prev.run$Vobs
     kappa = prev.run$kappa[length(prev.run$kappa)]
     update.kappa = prev.run$update.kappa
+    collapsed.g = prev.run$collapsed.g
     prev = prev.run$prev
     kappa.prior = prev.run$kappa.prior
     if(is.infinite(maxit)) maxit = prev.run$maxit
@@ -113,9 +114,9 @@ bayes.2S_seq = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(V
     cat('Searching starting values by one naive run \n')
     done = F
     while(!done){
-      mod.simple = bayes.2S(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = T,
+      mod.simple = bayes.2S_seq(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = T,
                             ndraws=ndraws.naive, chains=3, thining=1, prop.sd.X=naive.run.prop.sd.X,
-                            beta.prior.X = 4, sig.prior.X = 10, fix.sigma.X = fix.sigma.X,
+                            beta.prior.X = beta.prior.X, sig.prior.X = sig.prior.X, fix.sigma.X = fix.sigma.X,
                             prev.run = NULL, dist.X = dist.X, update.burnin = T,
                             beta.prior = 't', vanilla = T)
       pars.simple = as.matrix(mod.simple$par.X.bi)
@@ -370,7 +371,7 @@ bayes.2S_seq = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(V
   par.X.bi = trim.mcmc(par.X.all, burnin = burnin, thining = thining)
   #
   # Undo Vobs recoding
-  for(i in 1:length(Vobs)) if(Vobs[[i]][1] ==0 & is.infinite(Vobs[[i]][2])) Vobs[[i]] = 0
+  for(i in 1:length(Vobs)) if(g.fixed[i] == 1) Vobs[[i]] = 0
   
   
   t1 = Sys.time()
@@ -402,6 +403,7 @@ bayes.2S_seq = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(V
   ret$prev = prev
   ret$vanilla = vanilla
   ret$par.exp = par.exp
+  ret$collapsed.g = collapsed.g
   ret$update.kappa = update.kappa
   ret$priors = priors
   ret$thining = thining

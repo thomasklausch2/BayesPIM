@@ -13,7 +13,7 @@ augment.C.collapsed = function(w_sums, Vobs, kappa, theta1, r, g.fixed){
   
   p0 <- numeric(n)
   p0[] <- NA
-  p0[!g.fixed]  = theta0[!g.fixed] * w_sums
+  p0[!g.fixed]  = theta0[!g.fixed] * w_sums[!g.fixed]
   
   p1 <- numeric(n)
   p1[] <- NA

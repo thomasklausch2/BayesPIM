@@ -35,8 +35,8 @@ bayes.2S_seq(
   conv.crit = "upper",
   kappa.prior = NULL,
   fix.k = F,
-  par.exp = T,
-  collapsed.g = F
+  par.exp = F,
+  collapsed.g = T
 )
 }
 \arguments{

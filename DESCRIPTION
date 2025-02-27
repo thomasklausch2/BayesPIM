@@ -7,7 +7,6 @@ Description: Model time to event from interval censored (screening) data when th
 License: `use_mit_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 LinkingTo: Rcpp
 Imports: Rcpp, coda, mvtnorm, MASS, ggamma, doParallel, foreach, parallel, actuar
-

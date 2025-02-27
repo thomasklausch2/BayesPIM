@@ -8,7 +8,7 @@ bayes.2S = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(Vobs)
                     beta.prior.X = 4, sig.prior.X = 10, tau.w = 1, k.prior = sqrt(10), fix.sigma.X = F,
                     prev.run = NULL, dist.X = 'weibull', update.burnin = T,
                     beta.prior = 't', vanilla = F, ndraws.naive = 5e3, update.till.converge = F, ndraws.update = NULL, maxit=Inf,
-                    conv.crit = 'upper', kappa.prior = NULL, fix.k = F, par.exp=T, collapsed.g = F, min_effss = chains*10){
+                    conv.crit = 'upper', kappa.prior = NULL, fix.k = F, par.exp=F, collapsed.g = T, min_effss = chains*10){
   t0 = Sys.time()
   if(!is.numeric(maxit)) stop('maxit has to be numeric.')
 
@@ -30,6 +30,7 @@ bayes.2S = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(Vobs)
     if(is.infinite(maxit)) maxit = prev.run$maxit
     vanilla = prev.run$vanilla
     par.exp = prev.run$par.exp
+    collapsed.g = prev.run$collapsed.g
     ndraws.prev = prev.run$ndraws
     if(is.null(ndraws.update)) ndraws = prev.run$ndraws else ndraws = ndraws.update
     if(is.null(prop.sd.X)){ prop.sd.X =  prev.run$prop.sd.X }
@@ -422,6 +423,7 @@ bayes.2S = function(Vobs, kappa, Z.X = NULL, Z.W = NULL, r = rep(0, length(Vobs)
   ret$prev = prev
   ret$vanilla = vanilla
   ret$par.exp = par.exp
+  ret$collapsed.g = collapsed.g
   ret$update.kappa = update.kappa
   ret$priors = priors
   ret$thining = thining
