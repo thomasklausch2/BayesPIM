@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Introduction to BayesPIM</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to BayesPIM</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>BayesPIM is a versatile modeling environment for screening and
+surveillance data, as described in detail in the main reference Klausch
+et al. (2024). It is a so-called prevalence-incidence mixture (PIM)
+model with a Bayesian Gibbs sampler as the estimation backend. It
+requires a specific data structure, as described in detail in the main
+references. Specifically, for each individual, a numeric vector of
+screening times (starting at 0) is available. In the case of right
+censoring, this vector ends in its last position with Inf.</p>
+<p>BayesPIM includes a data-generating function that simulates data
+according to the model’s assumptions. This is useful for illustration or
+testing.</p>
+</div>
+<div id="data-generation" class="section level2">
+<h2>Data generation</h2>
+<p>We start by loading BayesPIM:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(BayesPIM)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Loading required package: coda</span></span></code></pre></div>
+<p>and generate data</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Generate data according to the Klausch et al. (2024) PIM</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">gen.dat</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">kappa =</span> <span class="fl">0.7</span>, <span class="at">n =</span> <span class="fl">1e3</span>, <span class="at">theta =</span> <span class="fl">0.2</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">p =</span> <span class="dv">1</span>, <span class="at">p.discrete =</span> <span class="dv">1</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">beta.X =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>), <span class="at">beta.W =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">v.min =</span> <span class="dv">20</span>, <span class="at">v.max =</span> <span class="dv">30</span>, <span class="at">mean.rc =</span> <span class="dv">80</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">sigma.X =</span> <span class="fl">0.2</span>, <span class="at">mu.X =</span> <span class="dv">5</span>, <span class="at">dist.X =</span> <span class="st">&quot;weibull&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="at">prob.r =</span> <span class="dv">1</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>)</span></code></pre></div>
+<p>For all details, see ?gen.dat. Here, we simulate screening data under
+an AFT survival (incidence) model:</p>
+<p><span class="math display">\[\log(x_i) = \mathbf{z}_{xi}&#39;
+\mathbf{\beta}_x + \sigma \epsilon_i\]</span></p>
+<p>and a Probit prevalence model where prevalence is given when <span class="math inline">\(g_i=1\)</span> and absent when <span class="math inline">\(g_i=0\)</span>, and we use the latent variable
+representation <span class="math inline">\(Pr(g_i=1 | \mathbf{z}_{wi}) =
+Pr(w_i &gt; 0 | \mathbf{z}_{wi})\)</span> to fit the model, where</p>
+<p><span class="math display">\[w_i = \mathbf{z}_{wi}&#39;
+\mathbf{\beta}_w + \psi_i\]</span></p>
+<p>with <span class="math inline">\(\psi_i\)</span> a standard normal
+random variable. <code>gen.dat</code> sets the regression coefficients
+of the incidence and prevalence model to <code>beta.X</code> and
+<code>beta.W</code> respectively, with <code>mu.X</code> and
+<code>sigma.X</code> the intercept and scale of the AFT model and the
+intercept of the prevalence model given by <code>qnorm(theta)</code>.
+So, <code>theta</code> can be interpreted as the conditional probability
+of prevalence if all covariates are zero.</p>
+<p>Subsequently, a screening series is super-imposed using successive
+draws from uniformly distributed random variables, with
+<code>v.min</code> the minimum and <code>v.max</code> the maximum time
+between screening moments. The right censoring time is drawn from an
+exponential distribution with mean time to right censoring
+<code>mean.rc</code>. At each screening time, a test is executed if the
+event of the time is larger than the true simulated <span class="math inline">\(x_i\)</span>. Detection is successful with
+probability <code>kappa</code>, the test sensitivity.
+<code>prob.r</code> controls the probability that a baseline test is
+executed, which we leave at one denoting a baseline test for all
+individuals. This data generating mechanism is identical to the one
+described in Simulation 1 in Klausch et al. (2024).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(dat<span class="sc">$</span>Vobs)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; [1]   0.00000  22.53705  51.89452  78.35944 104.52213 131.74624</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; [1]  0.00000 25.37066</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; [[4]]</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; [[5]]</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; [1]   0.00000  27.37410  53.60168  80.54386 108.43628       Inf</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; [[6]]</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; [1]  0.00000 22.31108 48.06398 77.10746      Inf</span></span></code></pre></div>
+<p>We see <code>dat$Vobs[[1]]</code> and <code>dat$Vobs[[3]]</code> are
+prevalent cases positive at baseline. <code>dat$Vobs[[2]]</code> has an
+event detected at <code>131.7</code> and <code>dat$Vobs[[5]]</code> and
+<code>dat$Vobs[[6]</code> are right censored cases (no event). In
+addition, covariates <code>dat$Z</code> are returned as well as the true
+times <code>dat$X.true</code> and prevalence status <code>dat$C</code>,
+which are both not observed in practice (latent), <code>dat$r</code>
+indicates whether a baseline test was done. Data of this kind is
+processed by <code>bayes.2S</code>.</p>
+</div>
+<div id="running-the-estimation-gibbs-sampler" class="section level2">
+<h2>Running the estimation (Gibbs sampler)</h2>
+<p>The <code>bayes.2S</code> function first searches starting values
+using a vanilla run that drops all known (confirmed) prevalent cases and
+assumes <code>kappa=1</code> as well as no prevalence
+(<code>prev=F</code> setting in <code>BayesPIM</code>). This setting is
+akin to an interval censored survival regression, which has high
+robustness and finds starting values in the neighbourhood of the final
+estimates of a run of <code>BayesPIM</code> where
+<code>kappa&lt;1</code> and <code>prev=T</code>. Subsequently, the main
+Gibbs sampler is started and run for <code>ndraws</code>.</p>
+<p>The code below shows a straight forward fit to the generated data. In
+practice, we advise to normalize any continuous variables, as large
+scale in <code>Z.X</code> can lead to slow convergence of the Gibbs
+sampler, which is not needed here because the generated covariates are
+standard normally distributed. The test sensitivity <code>kappa</code>
+is set to a known value when <code>update.kappa=F</code> - otherwise it
+is estimated, and then a <code>kappa.prior</code> is needed; see below.
+The function runs <code>chains=4</code> MCMC chains in parallel and
+takes about 1 to 3 minutes, depending on machine. If parallel processing
+is not desired <code>parallel = F</code> is available or
+<code>bayes.2S_seq</code> can be used which uses a for loop over the
+chains.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># An initial model fit with fixed test sensitivity kappa (approx. 1-3 minutes, depending on machine)</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>mod <span class="ot">=</span> <span class="fu">bayes.2S</span>( <span class="at">Vobs =</span> dat<span class="sc">$</span>Vobs,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                <span class="at">Z.X =</span> dat<span class="sc">$</span>Z,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>                <span class="at">Z.W =</span> dat<span class="sc">$</span>Z,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>                <span class="at">r=</span> dat<span class="sc">$</span>r,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>                <span class="at">kappa =</span> <span class="fl">0.7</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                <span class="at">update.kappa =</span> F,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>                <span class="at">ndraws=</span> <span class="fl">1e4</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>                <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>                <span class="at">prop.sd.X =</span> <span class="fl">0.008</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>                <span class="at">parallel =</span> T,</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>                <span class="at">dist.X =</span> <span class="st">&#39;weibull&#39;</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>)</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; Searching starting values by one naive run </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; Starting Gibbs sampler with 3 chains and 5000 iterations.</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; Now doing main run. </span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; Starting Gibbs sampler with 4 chains and 10000 iterations.</span></span></code></pre></div>
+<p>Subsequently, we inspect results</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Inspect results</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>mod<span class="sc">$</span>runtime <span class="co"># runtime of Gibbs sampler</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">plot</span>( <span class="fu">trim.mcmc</span>( mod<span class="sc">$</span>par.X.all, <span class="at">thining =</span> <span class="dv">10</span>) ) <span class="co"># MCMC chains including burn-in</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">plot</span>( <span class="fu">trim.mcmc</span>( mod<span class="sc">$</span>par.X.bi, <span class="at">thining =</span> <span class="dv">10</span>) ) <span class="co"># MCMC chains excluding burn-in</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="fu">summary</span>( mod<span class="sc">$</span>par.X.bi)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">apply</span>(mod<span class="sc">$</span>ac.X, <span class="dv">2</span>, mean) <span class="co"># Acceptance rates per chain</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="fu">gelman.diag</span>(mod<span class="sc">$</span>par.X.bi) <span class="co"># Gelman convergence diagnostics</span></span></code></pre></div>
+<p>The <code>coda</code> package is required for doing these analyses
+(attached when loading <code>BayesPIM</code>). Function
+<code>trim.mcmc</code> is a convenient extension to thin and trim an
+<code>mcmc.list</code> for faster processing.</p>
+</div>
+<div id="automated-search-for-the-proposal-s.d." class="section level2">
+<h2>Automated search for the proposal s.d.</h2>
+<p>A proposal standard deviation has to be specified for the Metropolis
+step that samples incidence model parameters from the full conditional
+distribution. There is no general guidance on this parameter other than
+that it is often found in the range of 0.001 to 0.1. Ideally the
+acceptance rate of the Metropolis sampler is 23% (which is a general
+result for Metropolis-Hastings samplers). Above, we set the
+<code>prop.sd.X</code> to a good value, but in practice it has to be
+searched by trial and error. Therefore, the function
+<code>search.prop.sd</code> has been desgined which can be used to
+automatically search for a good proposal s.d..</p>
+<p>If the <code>prop.sd.X</code> should be searched automatically, the
+function <code>search.prop.sd</code> can be used. This function requries
+an initial fit by <code>bayes.2S</code> as input, typically a few
+thousand draws, and then heuristically searches a useful
+<code>search.prop.sd</code> which yields a Metropolis sampler that has
+an acceptance probability in the <code>acc.bounds.X</code>, by default
+set to <code>c(0.2, 0.25)</code>. What the automated search essentially
+does is, starting with the initial fit, the <code>prop.sd.X</code> is
+adapted using a heuristic rule (see <code>?search.prop.sd</code>) such
+that the acceptance rate likely increases if it is too low or decreases
+if it is too high. After an acceptance rate in the interval
+<code>acc.bounds.X</code> has been obtained, the algorithm double
+<code>ndraws</code> to reassure on the stability of the result. It does
+so a total of <code>succ.min</code> times (default: <code>3</code>).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># An initial model fit with a moderate number of ndraws (here 1e3)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>mod.ini <span class="ot">=</span> <span class="fu">bayes.2S</span>( <span class="at">Vobs =</span> dat<span class="sc">$</span>Vobs,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>                <span class="at">Z.X =</span> dat<span class="sc">$</span>Z,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>                <span class="at">Z.W =</span> dat<span class="sc">$</span>Z,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>                <span class="at">r=</span> dat<span class="sc">$</span>r,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>                <span class="at">kappa =</span> <span class="fl">0.7</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>                <span class="at">update.kappa =</span> F,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>                <span class="at">ndraws=</span> <span class="fl">1e3</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>                <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>                <span class="at">prop.sd.X =</span> <span class="fl">0.005</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>                <span class="at">parallel =</span> T,</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>                <span class="at">dist.X =</span> <span class="st">&#39;weibull&#39;</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>)</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; Searching starting values by one naive run </span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; Starting Gibbs sampler with 3 chains and 5000 iterations.</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; Now doing main run. </span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; Starting Gibbs sampler with 4 chains and 1000 iterations.</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co"># Running the automated search</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>search.sd <span class="ot">&lt;-</span> <span class="fu">search.prop.sd</span>(<span class="at">m =</span> mod.ini)</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; Iteration 1 </span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; Acceptance rate was: 0.564 </span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; prop.sd.X is set to 0.011 </span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; Iteration 2 </span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; Acceptance rate was: 0.417 </span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; prop.sd.X is set to 0.019 </span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; Iteration 3 </span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; Acceptance rate was: 0.113 </span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; prop.sd.X is set to 0.011 </span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; Iteration 4 </span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; Acceptance rate was: 0.216 </span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; Success. Doubling number of MCMC draws: 2000 </span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; Iteration 5 </span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; Acceptance rate was: 0.223 </span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt; Success. Doubling number of MCMC draws: 4000 </span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt; Iteration 6 </span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt; Acceptance rate was: 0.222 </span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; Finished calibrating proposal variance.</span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="fu">print</span>(search.sd<span class="sc">$</span>prop.sd.X)</span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt; [1] 0.01058928</span></span></code></pre></div>
+</div>
+<div id="model-updating" class="section level2">
+<h2>Model updating</h2>
+<p>As can be seen from the R-hat statistics obtained using
+<code>gelman.diag</code>, the sampler has not fully converged yet. To
+achieve convergence the model can be updated for another
+<code>ndraws</code> or for a specified number of draws
+<code>ndraws.update</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Model updating</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>mod_update <span class="ot">=</span> <span class="fu">bayes.2S</span>( <span class="at">prev.run =</span> mod ) <span class="co"># ndraws additional MCMC draws</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>mod_update <span class="ot">=</span> <span class="fu">bayes.2S</span>( <span class="at">prev.run =</span> mod, <span class="at">ndraws.update =</span> <span class="fl">1e3</span> ) <span class="co"># ndraws.update additional MCMC draws</span></span></code></pre></div>
+<p>In addition the argument <code>update.till.converge = T</code> allows
+<code>bayes.2S</code> to run until convergence directly, which involves
+repeated internal calles to <code>bayes.2S</code> to obtain updates if
+convergence has not been attained yet. Convergence is attained when the
+Gelman-Rubin convergence diagnositic <span class="math inline">\(\hat{R}
+&lt; 1.1\)</span> for all parameters and the minimum effective sample
+size <code>min_effs</code> is reached. If
+<code>update.till.converge = T</code>, the sampler continues updating
+until convergence is attained or <code>maxit</code> is reached.</p>
+</div>
+<div id="cumulative-incidence-functions" class="section level2">
+<h2>Cumulative Incidence Functions</h2>
+<p>Cumulative incidence functions (CIFs) indicate the cumulative
+probability to progress until a specified point in time.
+<code>BayesPIM</code> offers two different type of CIFs which differ in
+how they handle prevalence. First, mixture CIFs depict prevalence as a
+point-probability mass at zero. Second, non-prevalence (healthy
+population) CIFs depict the CIF for the stratum of the population that
+is healthy (disease free) at baseline. Hence, mixture CIFs start at a
+probability higher than zero at time zero, whereas non-prevalence CIFs
+start at zero (like ‘usual’ CIFs do).</p>
+<p>For both mixture CIFs and non-prevalence CIFs we can estimate a
+marginal variant which integrates over all model covariates or a
+conditional variant which integrates over no or only a subset of
+covariates. A marginal CIF can be interpreted as the CIF for a randomly
+selected individual from the population, while a conditional CIF gives
+the CIF for a randomly selected individual from a subset defined by a
+combination of covariates (e.g. male 60 year olds).</p>
+<p>To obtain CIF estimates, the function <code>get.ppd.2S</code> is
+employed. We first obtain the two types of marginal CIFs:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Get posterior predictive marginal CIF, we provide percentiles and obtain quantiles</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>cif_nonprev <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;x&#39;</span>, </span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>                          <span class="at">ppd.type =</span> <span class="st">&quot;quantiles&quot;</span>, <span class="at">perc =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.01</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>cif_mix     <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;xstar&#39;</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>                          <span class="at">ppd.type =</span> <span class="st">&quot;quantiles&quot;</span>, <span class="at">perc =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.01</span>))</span></code></pre></div>
+<p>The argument <code>type</code> controls the type CIF depicted. Here
+<code>xstar</code> denotes the mixture of prevlant and incident cases
+and <code>x</code> the CIF of the healthy sub-group. In princple, CIFs
+can be obtained in two ways, specified through <code>ppd.type</code>:
+either specify a set of percentiles <code>perc</code> for which
+quantiles are returned, or specify a set of quantiles <code>quant</code>
+for which percentiles are returned. Above, we show the inference via
+percentiles which requires to specify
+<code>ppd.type = &#39;quantiles&#39;</code> to indicate that quantiles should be
+returned. An arbitrary narrow grid of percentiles can be supplied but we
+found that <code>seq(0, 1, 0.01)</code> is sufficiently narrow.</p>
+<p>The argument <code>pst.samples</code> gives the precision of
+inference. Note that the computation of CIF’s requires selecting a
+random sample of posterior draws of the parameters (default:
+<code>1000</code>). For each unique draw one CIF is obtained and
+subsequently the median (returned as list entry
+<code>cif_nonprev$med.cdf</code>) and 95% credible intervals
+(<code>cif_nonprev$med.cdf.ci</code>) are determined point-wise at
+<code>perc</code> (or <code>quant</code>). Hence, more precise inference
+is obtained through higher values of <code>pst.samples</code> which,
+however, increases computational cost.</p>
+<p>Subsequently, we can plot the results as follows.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Comparison plot non-prevalent stratum CIF vs. mixture CIF (marginal)</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">plot</span>(cif_nonprev<span class="sc">$</span>med.cdf, cif_nonprev<span class="sc">$</span>perc, <span class="at">ty =</span> <span class="st">&#39;l&#39;</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">300</span>), <span class="at">xlab =</span> <span class="st">&#39;Time&#39;</span>, <span class="at">ylab =</span><span class="st">&#39;Cum. prob.&#39;</span>, <span class="at">main =</span> <span class="st">&#39;Non-prevalence CIF&#39;</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="fu">lines</span>(cif_nonprev<span class="sc">$</span>med.cdf.ci[<span class="dv">1</span>,], cif_nonprev<span class="sc">$</span>perc, <span class="at">lty=</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">2</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="fu">lines</span>(cif_nonprev<span class="sc">$</span>med.cdf.ci[<span class="dv">2</span>,], cif_nonprev<span class="sc">$</span>perc, <span class="at">lty=</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">2</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">plot</span>(cif_mix<span class="sc">$</span>med.cdf, cif_nonprev<span class="sc">$</span>perc, <span class="at">ty =</span> <span class="st">&#39;l&#39;</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">300</span>), <span class="at">xlab =</span> <span class="st">&#39;Time&#39;</span>, <span class="at">ylab =</span><span class="st">&#39;Cum. prob.&#39;</span>, <span class="at">main =</span> <span class="st">&#39;Mixture CIF&#39;</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="fu">lines</span>(cif_mix<span class="sc">$</span>med.cdf.ci[<span class="dv">1</span>,], cif_nonprev<span class="sc">$</span>perc, <span class="at">lty=</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">2</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="fu">lines</span>(cif_mix<span class="sc">$</span>med.cdf.ci[<span class="dv">2</span>,], cif_nonprev<span class="sc">$</span>perc, <span class="at">lty=</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+<p>The same result is obtaiend via <code>ppd.type = &quot;quantiles&quot;</code>,
+but now <code>quant</code> has to be passed in a useful range of values.
+If it is unknown which value range is useful, the inference approach via
+<code>ppd.type = &quot;percentiles&quot;</code> is more straightforward, as it
+only requires specifying a grid of percentiles between 0 and 1 and any
+associated quantiles are returned.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Alternatively, we can provide quantiles and obtain percentiles</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>cif2_nonprev <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;x&#39;</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>                           <span class="at">ppd.type =</span> <span class="st">&quot;percentiles&quot;</span>, <span class="at">quant =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>cif2_mix     <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;xstar&#39;</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>                           <span class="at">ppd.type =</span> <span class="st">&quot;percentiles&quot;</span>, <span class="at">quant =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>)</span></code></pre></div>
+<p>However, the inference approach via
+<code>ppd.type = &quot;percentiles&quot;</code> is still useful if probabilities
+of transition for specific quantiles are of interest. For example, if
+the mixture CIF should be evaluated at zero and 100 time units
+(e.g. days), the following approach is useful to obtain prevalence
+estimates and incidence estimates at 100 time units.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">get.ppd.2S</span>(mod, <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;xstar&#39;</span>, <span class="at">ppd.type =</span> <span class="st">&quot;percentiles&quot;</span>, <span class="at">quant =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">100</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; $med.cdf</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; [1] 0.241 0.360</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; $med.cdf.ci</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt;           [,1]     [,2]</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 2.5%  0.203000 0.313975</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt; 97.5% 0.279025 0.412000</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; $quant</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; [1]   0 100</span></span></code></pre></div>
+<p>While the above discussed CIFs are marginal, i.e. they integrate over
+all underlying covariates, it is also possible to condition CIFs on all
+or a subset of covariates passed in <code>Z.X</code> and
+<code>Z.W</code>. For this, the <code>get.ppd.2S</code> arguments
+<code>fix_Z.X</code> and <code>fix_Z.W</code> are employed. If the
+columns (covariates) in <code>Z.X</code> and <code>Z.W</code> are
+identical, only <code>fix_Z.X</code> has to be employed as demonstrated
+by the following example.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Conditional CIFs, example conditional mixture CIF integrating over one covariate</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>cif_mix_m1 <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">fix_Z.X =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="cn">NA</span>), <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;xstar&#39;</span>, </span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>                         <span class="at">ppd.type =</span> <span class="st">&quot;quantiles&quot;</span>, <span class="at">perc =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.01</span>))</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>cif_mix_0  <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">fix_Z.X =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="cn">NA</span>), <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;xstar&#39;</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>                         <span class="at">ppd.type =</span> <span class="st">&quot;quantiles&quot;</span>, <span class="at">perc =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.01</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>cif_mix_p1 <span class="ot">&lt;-</span> <span class="fu">get.ppd.2S</span>(mod, <span class="at">fix_Z.X =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="cn">NA</span>), <span class="at">pst.samples =</span> <span class="fl">1e3</span>, <span class="at">type =</span> <span class="st">&#39;xstar&#39;</span>, </span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>                         <span class="at">ppd.type =</span> <span class="st">&quot;quantiles&quot;</span>, <span class="at">perc =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.01</span>))</span></code></pre></div>
+<p>Here we get three conditional CIFs fixing the first covariate in the
+incidence and prevalence model at the levels -1, 0, and 1, respectively,
+while inegrating over the second covariate which is indicated by setting
+this entry to <code>NA</code>. Subsequently a comparative plot is
+obtained via</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Plot of CIFs for three levels of the first covariate</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">plot</span>(cif_mix_m1<span class="sc">$</span>med.cdf, cif_mix_m1<span class="sc">$</span>perc, <span class="at">ty =</span> <span class="st">&#39;l&#39;</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>     <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">300</span>), <span class="at">xlab =</span> <span class="st">&#39;Time&#39;</span>, <span class="at">ylab =</span><span class="st">&#39;Cum. prob.&#39;</span>, <span class="at">main =</span> <span class="st">&#39;Conditional mixture CIF&#39;</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">lines</span>(cif_mix_0<span class="sc">$</span>med.cdf, cif_mix_m1<span class="sc">$</span>perc, <span class="at">col=</span><span class="dv">2</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="fu">lines</span>(cif_mix_p1<span class="sc">$</span>med.cdf, cif_mix_m1<span class="sc">$</span>perc, <span class="at">col=</span><span class="dv">3</span>)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAAGACAMAAACTGUWNAAAAulBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6ZpA6ZrY6kNth0E9mAABmADpmOgBmOjpmkLZmkNtmtrZmtttmtv+QOgCQOjqQZjqQkLaQtpCQttuQ29uQ2/+2ZgC2Zjq2ZpC2kDq2kGa227a229u22/+2/7a2/9u2///bkDrbkGbbtmbbtpDb27bb29vb2//b/7bb///fU2v/tmb/25D/27b//7b//9v///9EaJEcAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAO3ElEQVR4nO2de2PbthXFaTeZ1GVtZC17xF7Xzswe9Wat6bZIrqTv/7VGAnzJIgmABHguyHP+cGLr8gI6P+JBEpCSMwVVgq7A0kUAYBEAWAQAFgGARQBgEQBYBAAWAYBFAGARAFgEABYBgEUAYBEAWAQAFgGARQBgEQBYBAAWAYBFAGARAFgEABYBgEUAYBEAWAQAFgGARQBgEQBYBADWdABOP71LkuSbJ4vQNLl9Pj0kb79kR/31+Vz811xCd9z1S3liSzVqrvPskkK31jk6NRmA44ei0htzbA3glw+3YQCoxHZq1jxeAFnNS90bg9PqnaUu79EWlFvii5rHCyCr85sfshMvezfKpM+/S5Kvfv9FvXLzl0/Zq4952OnTOourWkCq3uW/HnqP+Zyfod88NgEct8nq87vk5uP532sVpV56WeeOZa/dPuvEzxpD9peNyvn9h+T2KatDkty8/9Ja8xLAzaMvYyYCkFVcny2nP73/7/lcnkO5X+XpdPPYONvaAHQcc6j+ewFA611xnlZn7ib/cX9uBaCzF8e+eW6rebQA8lOy8Wt2LpZ+qDPsqfh/ZubqS34GlmNAWrvXcUz24q/Ui5tXADbnnzIfP1ZR2UvZz5vvVZqiC3oF4O3T+T/53550vpaav+qCzL2pURMBqN+QUtEDq3/UGZkHrBqGtADoOibTz3/PzvTVJYDsf/pnk032f91s2gHcn8tfst+K/v2y5jMBUDqlmrJuz+pEy/6uHE1bAHQdcz59p814BWBV/rxoHGk5DWsDoMgoRmX31lHzCAFcNuTyt0P+Fhpmln9vA9B1TD5svPnzz1s7AId1YWwTgPa4AHBILgG0d0HRjQGNoezbp74WUJyn9i1Au3e0A6AG+aqIVgDZL/emmkcI4NU09LI/r7sT+zGgOuZQDgcbCwA7NS/alGmKPIekAeDVdGEu09BXF2KXM5oagJ4FpfUsaFdPLzuOUX/O3bFoAXns/7bq2F3xM3stP7gGkKHJLh9+2VbXdK0XYvEBqC/o3+e/XczpawB6fl5fB6geufU64GIMsByE81noo4Ksu/rb52rEbQAorgNqi5s1jxhAeUvrR/2buqr9Q/6/CwCnv62Trz7WY0B+TfDmx+aV8NUx+SzozQ+7+v7duQvAoex98lP5k7qUeMnM/fYfzVlQ1tl8l2H59qm15jEDoFpFAGARAFgEABYBgEUAYBEAWAQAFgGARQBgEQBYBAAWAYBFAGARAFgEABYBgEUAYBEAWAQAFgGARQBgEQBYBAAWAYBFAGARAFgEABYBgOUGoFwL7mGDMqXlBGBX7lc72HzgAGUjFwCnh8r2XcdnAiRUoRAAjttq+9qhoxPikFIoCACbFuCQbtYKAiAbA4om0DkGEEChMACqD8Ho/FQYAigUCMDU6eIVAYAVGsCOs6B+TdwC3Ke/cmRT7b2WXcI7JevibQMh6cLJfMrsG+rPdXcpnd+6IraBkHQhZGyplqf7K8dfl2JdHdtASDrvMvU2dh2NRR9DAC2ycN+cxLJ/D3QvqO4545sFeXLftjTLODfHTg+mBwFyAfTWzLP7puIGBSqdHlb9AVIBGEZdcwIn98/hxoCD4YMCZQIYab/LtL4q0nsgJJ0XjbZ/UKHeAyHpPAhiPwFU6h97TUcPtZ8ASo06/YfbTwCFev03HTzCfgLQ6qmNRe8fquiBgZB049Tnv/Hgcf4TwHmc/2O6f1PhAwMh6Uapuy6Bu5/+wocGQtKN0XD/R5/+vaUPDYSkG6ER/octfmggJN1wgf1fPAC0/0sHAPefALpkWuAQvgZDAyHpBgrvPwG0azL/lw1AgP+LBiDB/1AA0iRZqZ2SXU+GBQAQ4X+oHTLq67zU1+PI3SEzEIBf/wPuETuoLxCSu0dMhv+hVsbdl/sj5e6S7KrBtP4vtwUI8T/0GNDYsDoiXQh1VKD3CaSP28+W9RgRqCR+FtTlf98xAexf7HWAGP8XCmDQABAnAJG7JAX5P3ULkLFLcgiAQP4vsguS5D8B1IL4HwqA8SPLgABE+R/qQsz4kWUEUCjcrQgtebciZPkf8Gaclrybce4AQvrPFlAI5X+wMUDuR5YtAoDgjywT5v/yrgNcAQT2f3EApPlPAEoEMJXE+U8AuQhgKsnznwDA/i8LgED/CaAbQIhFKNdaEgBH/8NVpKnhALoet3su159E+r+kFkAAAdMNLRHuPwF0SDQAda+580az53K9qa1EvP9DAOhPpNyp1efhy/Wm2QAonzemo9rA5ACE+j8AQPnEvetxu+dyfckFwIT+D2oB+lOJux63ey7Xk6T6P2wMyPugQ+8YkGbN42WdJJ1BBFDIEYDFB9PnUv5//XixQmhguX4k1v9QC7OyNpKqnkrIuqDFAbgvJ0syVsbJ9X8QgLxz7+7dc+Vn/05QC3AAMLH/wwfhXd8XBBy3t8+NzcJjyvWiltKE+D/iQqx/GnrQA3Xn92gQQKFFXIgJ9j9YC/BWrg/NC4DNGFBLwjZVyf4HmgV1Z0FsU7UGAPB/CQ9kRPs/YgyYqNwgRUUNoPP2TlOCtqnK9n/QIGyef0rapjo7ANUN0W4OojbpXZckyf9wN+MKwW/GCfc/DABJLcASAMr/QMtS5GxTle7/oEFYfxxi75WYmG2qMwRwetBndxTLUsT7P2QW9Ft96kdxN9QOAND/ES0giruhV8VI83/E0kS7u6Gjyx2nOQKwXJniq9xRku//zO+GEsBU6SwLkec/AYD9nzWAGPwngAnq0asZA4jC/xEAxO8TtgCA93/GLSAO/wkAreUAkOn/EADlvQjhY8CrEoT6P+hu6Mg92m7leipAqv+h1gX5K9dTAVcAhPgfdmXcy7qTVWgAsfg/ZAxQ2x97ZXHHOjCAaPwfBGBtHISLxRC4FmAAIMf/QV1Q576jWsdtPlLDAMTjf7hBOL15lApAkv8BB+FdskEBiMj/MINwEbfu/i7PKQGI9j/M6uhCpwcMgJj8n+W9oD4A0vwPDgCwSzIq/4N2QW1ZJtgl2QNAnv/DW8C4paEBW0Bc/o/oglKL6zEP5Y7LLN7/EQB6mwBul2Rk/gd6KA/cJdkJQKb/wwEct91dEHCPWJf/03wZwAANnwX1PBcD7pLsACDV/kDXAbgW0O6/2NP/HOpCDLZLspm29j9MWX7kDEA/DnhZ998SBe2SjM9/ZwD6SUv9b/Byh2Yt/Zfc/eRyBVBtTlUfzjpBuQOTFv5Lt98ZgMXw6rncYUlL/0OU4leOACwmmJ7LHZRT+y//9D8PAFC3AGkA6jus+33ufgz2DxgDqutfaR9V0Dj/72Jx/+wOoHrO3vPA3Wu5zgn38Zify/k6oLi02nVdYfku1y1hTOe+1pBlKb0fCu27XPt8yvzu70YVqnk8lL8rz/zo/I8ewJ32Xqfbx+d/bADuXquZLUL7BQK4srjF79ZkMZ7+ZwkArCw2JovUfhEAPOSK1v5ZAEgitn8OAKK2P3oA+8jtDwZglxR7A8yLcwcDyMzfT/pNHEEU6KH8zWOxcCgMgNz7vWulZCrgshS1pd43gH3pvWudpCoIgPK5Wfr2y3gA+wsNrZJYhV2Yla6cAOzb1FmhWfgfagwobD9uzTvl78xetx0/D/sDzoJ0J3R6CDIIz8b+OK8DZmR/jABmZX94AB6nodN/B+IUmrgFtOyS7AGQXMhLBcRJUBeUXMlvkTIlAMCS7L5WIAAOuyQjW8fjW4EuxBx2SRKA58Cz4x4xAvAceHbcJUkAngPPbAEuCjUG2O+SJADPgUoOuyQJwHOgazoC8Bzomo4APAe6piMAz4Gu6QjAc6BrOgLwHOiajgA8B7qmIwDPga7pCMBzoGs6AvAc6JqOADwHuqYjAM+BrukIwHOgazoC8Bzomo4APAe6piMAz4Gu6QjAc6BrOgLwHOiajgA8B7qmIwDPgUpcGWcrrowDi+uCwOLKOLDYAsDiyjiwuDIOLF4HgEUAYEW0TXWeEr1NdQnCd0ELFwGAhb8Zt3Dhb8YtXPhbEQsX/mbcwsUWABbsZhxVKAgAmy8ddk4cQWDISX2wPiMCXwkglkACAAcSADiQAMCBBAAOJABwIAGAA6MEQNmJAMAiALAIACwCAIsAwCIAsAgALAIAiwDAIgCwCAAsAgArDIBDktw8GmL0CouVKfrl188XGTuDdaApq1rdujFnrOKM1dxd5bF595WCADhk5R9MdXj5+tEi+rhVa/CqmM7gItCQ9fSQ/WmX+9mfsY4zVTPfqnKZx+rdVwoBQK+gS1f9UeXqxt7og16JXcV0BheBpqwv63xpWWaaIWMVZ0p43G7y11YWVWxXCAB17fu0W5mjD8lGGVDFdAWXgVZZ8/PTmLGIs0qYA7BK2KIgAFSr7Vq/Wyr9je5lDdEaQBnTE6z/aJU1bSTqC8zirBLmX/VulbBFIQDoDtDQDR63+frGdGOKVu+kiukJVoFWWfOVrVYZsziLhAcFyCZhm2AAitDbZ68AbLIeyjHYkFHFWVXz9PD2iyQADo0w6zD9dkHmrHpltzljcwW4qZr5oCKoC3IYhrLaGqLtBuHzJYCerMU2K2PGXXMFvqmaOSBBg7DVREzX89CYELbrYDcNvSDVk7X+Uvb+jGWcKeH16wKmoXaXIqqK6cYUfbC8ECtnQf1ZX9bled2fsY4zVTPNBmnluaALscbleZ/SbH53b4wuepYqpjO4COzPutMbTPIXejM24kzVvH7d6t2X4s04sAgALAIAiwDAIgCwCAAsAgCLAMAiALAIACwCAIsAwCIAsAgALAIAiwDAIgCwCAAsAgCLAMAiALAIACwCAIsAwCIAsAgALAIAK3oA5eeJJ7f/rL/eICJFDyBXtZU0QhEAWDMCkH/Dysv6j1mXtHlZ6yXju3JbvFzNDoDa4X77rPYIqe2ja9kEZgdgcy5/3Ktd7Pbb5TCaHYD7c/VD7xPSu7jEatYAigkqAYRWbwsQrjkDOMZwZTZnAGoWdE5lt4NZA1DXAbInQfMAELMIACwCAIsAwCIAsAgALAIAiwDAIgCwCAAsAgCLAMAiALAIACwCAIsAwCIAsAgALAIAiwDAIgCwCAAsAgCLAMD6P8cBgwp65fYxAAAAAElFTkSuQmCC" /><!-- --></p>
+<p>If the columns in <code>Z.X</code> and <code>Z.W</code> differ, care
+has to be taken in fixing the covariates to the right values. Suppose,
+for example <code>Z.X</code> contains the variables age, gender, and
+education, while <code>Z.W</code> contains age and education, then the
+vector <code>fix_Z.X</code> conditioning the incidence model used for
+the CIF would be, for example <code>c(60,0,1)</code>, denoting 60 years,
+male, and high education, so that the prevalence model would need to be
+conditioned through fixing <code>fix_Z.X = c(60, 1)</code>. Here, gender
+would be omitted because it was not part of the prevalence model.
+However, we believe that more commonly the incidence and prevalence
+models contain the same covariates, so that the approach of conditioning
+via <code>fix_Z.X</code> only, described above, likely is more commonly
+used.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). “A
+Bayesian prevalence-incidence mixture model for screening outcomes with
+misclassification.” arXiv:2412.16065.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
