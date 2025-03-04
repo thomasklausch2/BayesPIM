@@ -4,9 +4,9 @@
 \name{BayesPIM-package}
 \alias{BayesPIM}
 \alias{BayesPIM-package}
-\title{BayesPIM: Bayesian Prevalence Incidence Mixture model}
+\title{BayesPIM: Bayesian Prevalence-Incidence Mixture Model}
 \description{
-Model time to event from interval censored (screening) data when there is latent prevalence at baseline and misclassification (imperfect test sensitivity).
+This package models time-to-event data from interval-censored screening studies. It accounts for latent prevalence at baseline and incorporates misclassification due to imperfect test sensitivity. For details on usage see the vignette("BayesPIM_intro").
 }
 \author{
 \strong{Maintainer}: Thomas Klausch \email{t.klausch@amsterdamumc.nl}

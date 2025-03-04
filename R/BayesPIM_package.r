@@ -8,6 +8,6 @@
 #' @importFrom stats dexp dgamma dlnorm dnorm dt dweibull ecdf median optim pexp pgamma plnorm pnorm pweibull qexp qgamma qlnorm qnorm quantile qweibull rbeta rbinom rchisq rexp rgamma rlnorm rmultinom rnorm runif rweibull var
 #' @importFrom coda gelman.diag effectiveSize mcmc
 #' @importFrom actuar dllogis pllogis qllogis rllogis
-#' @import Rcpp coda mvtnorm MASS ggamma doParallel foreach parallel actuar
+#' @import Rcpp coda mvtnorm MASS ggamma doParallel foreach parallel
 ## usethis namespace: end
 NULL
