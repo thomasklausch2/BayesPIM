@@ -1,7 +1,54 @@
-#' get.IC_2S
+#' Compute Information Criteria for a Bayesian Prevalence-Incidence Mixture Model
 #'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
+#' Computes and returns information criteria for a fitted Bayesian prevalence-incidence mixture model, including the Widely Applicable Information Criterion 1 (WAIC-1), WAIC-2, and the Deviance Information Criterion (DIC). These criteria are commonly used for model comparison and evaluation in Bayesian analysis. See Gelman et al. (2014) for further details on these criteria.
+#' 
+#' @details
+#' This function calculates information criteria for a fitted Bayesian prevalence-incidence mixture model (`bayes.2S`). The information criteria include:
+#' 
+#' - **WAIC-1**: Based on the sum of posterior variances of log-likelihood contributions.
+#' - **WAIC-2**: Similar to WAIC-1 but incorporates an alternative variance estimate.
+#' - **DIC**: Measures model fit by penalizing complexity via the effective number of parameters.
+#' 
+#' The computation is performed by evaluating log-likelihood values for MCMC samples. By default, all MCMC samples after burn-in are used, though a subset can be specified via the `samples` argument.
+#' 
+#' Parallelization is available via the `foreach` package, utilizing multiple cores if `cores` is set accordingly. If `cores = NULL`, all available cores will be used.
+#'
+#' @param mod A fitted prevalence-incidence mixture model of class \code{bayes.2S}.
+#' @param samples The number of MCMC samples to use. Maximum is the number of post-burn-in samples available in the \code{bayes.2S} object.
+#' @param cores The number of cores for parallel processing using \code{foreach}. If \code{NULL} (default), all available cores will be used.
+#'  
+#' @return A \code{matrix} containing WAIC-1, WAIC-2, and DIC values for the model.
+#' 
+#' @references 
+#' Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016. https://doi.org/10.1007/s11222-013-9416-2
+#' 
+#' @examples
+#' # Generate data according to the Klausch et al. (2024) PIM
+#' set.seed(2025)
+#' dat = gen.dat(kappa = 0.7, n= 1e3, theta = 0.2,
+#'               p = 1, p.discrete = 1,
+#'               beta.X = c(0.2,0.2), beta.W = c(0.2,0.2),
+#'               v.min = 20, v.max = 30, mean.rc = 80,
+#'               sigma.X = 0.2, mu.X=5, dist.X = "weibull",
+#'               prob.r  = 1)
+#' 
+#' # An initial model fit with fixed test sensitivity kappa (approx. 1-3 minutes, depending on machine)
+#' mod = bayes.2S( Vobs = dat$Vobs,
+#'                 Z.X = dat$Z,
+#'                 Z.W = dat$Z,
+#'                 r= dat$r,
+#'                 kappa = 0.7,
+#'                 update.kappa = F,
+#'                 ndraws= 1e4,
+#'                 chains = 4,
+#'                 prop.sd.X = 0.008,
+#'                 parallel = T,
+#'                 dist.X = 'weibull'
+#' )
+#' 
+#' # Get information criteria
+#' get.IC_2S(mod, samples = 1e3)
+#' 
 #' @export
 get.IC_2S = function(mod, samples = nrow(mod$par.X.bi[[1]]), cores = NULL){
   update.kappa = mod$update.kappa

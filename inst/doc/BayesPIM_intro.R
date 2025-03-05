@@ -116,3 +116,24 @@ plot(cif_mix_m1$med.cdf, cif_mix_m1$perc, ty = 'l', ylim=c(0,1),
 lines(cif_mix_0$med.cdf, cif_mix_m1$perc, col=2)
 lines(cif_mix_p1$med.cdf, cif_mix_m1$perc, col=3)
 
+## -----------------------------------------------------------------------------
+# An exponential model
+mod_exp = bayes.2S( Vobs = dat$Vobs,
+                Z.X = dat$Z,
+                Z.W = dat$Z,
+                r= dat$r,
+                kappa = 0.7,
+                update.kappa = F,
+                ndraws= 1e4,
+                chains = 4,
+                prop.sd.X = 0.008,
+                parallel = T,
+                fix.sigma.X = T,
+                sig.prior.X = 1,
+                dist.X = 'weibull'
+)
+
+# Get information criteria
+get.IC_2S(mod, samples = 1e3)
+get.IC_2S(mod_exp, samples = 1e3)
+

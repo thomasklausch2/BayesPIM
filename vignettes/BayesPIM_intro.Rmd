@@ -205,5 +205,34 @@ lines(cif_mix_p1$med.cdf, cif_mix_m1$perc, col=3)
 
 If the columns in `Z.X` and `Z.W` differ, care has to be taken in fixing the covariates to the right values. Suppose, for example `Z.X` contains the variables age, gender, and education, while `Z.W` contains age and education, then the vector `fix_Z.X` conditioning the incidence model used for the CIF would be, for example `c(60,0,1)`, denoting 60 years, male, and high education, so that the prevalence model would need to be conditioned through fixing `fix_Z.X = c(60, 1)`. Here, gender would be omitted because it was not part of the prevalence model. However, we believe that more commonly the incidence and prevalence models contain the same covariates, so that the approach of conditioning via `fix_Z.X` only, described above, likely is more commonly used.
 
+## Information Criteria
+Bayesian information criteria are a straightforward approach for model selection. The function `get.IC_2S.r` returns the Widely Applicable Information Criterion (WAIC-1/-2) and the Divergence Information Criterion (DIC), as defined in Gelman et al. (2014). The information criteria are useful for selecting the best distribution for the incidence times. `bayes.2S` offers the Weibull, log-logistic, and normal distributions. In addition, we can obtain an exponential transition time through selecting a Weibull model and constraining the AFT scale parameter $\sigma$ to one. In `bayes.2S` this is achieved through setting `dist='weibull`, `sig.prior.X = 1`, and `fix.sigma.X=T`. To illustrate, we will compare the Weibull model fitted above with an exponential model. Note that the resulting exponential model is equivalent to a Markov model.
+
+```{r}
+# An exponential model
+mod_exp = bayes.2S( Vobs = dat$Vobs,
+                Z.X = dat$Z,
+                Z.W = dat$Z,
+                r= dat$r,
+                kappa = 0.7,
+                update.kappa = F,
+                ndraws= 1e4,
+                chains = 4,
+                prop.sd.X = 0.008,
+                parallel = T,
+                fix.sigma.X = T,
+                sig.prior.X = 1,
+                dist.X = 'weibull'
+)
+
+# Get information criteria
+get.IC_2S(mod, samples = 1e3)
+get.IC_2S(mod_exp, samples = 1e3)
+```
+
+As can be seen, the exponential model has higher information criteria values, suggesting that the Weibull model has better fit. This is plausible, since the data were generated from a Weibull distribution.
+
 ## References
+Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016. https://doi.org/10.1007/s11222-013-9416-2
+
 T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification." arXiv:2412.16065.

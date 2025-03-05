@@ -27,7 +27,7 @@ This is a basic example of data generation and use model fitting.
 ``` r
 library(BayesPIM)
 
-# Generate data according to the Klausch et al. (2025) PIM
+# Generate data according to the Klausch et al. (2024) PIM
 set.seed(2025)
 dat = gen.dat(kappa = 0.7, n= 1e3, theta = 0.2,
               p = 1, p.discrete = 1,

@@ -16,30 +16,31 @@ get.ppd.2S(
 )
 }
 \arguments{
-\item{mod}{A fitted prevalence-incidence mixture model of class \code{Bayes.2S}.}
+\item{mod}{A fitted prevalence-incidence mixture model of class \code{bayes.2S}.}
 
 \item{fix_Z.X}{Either \code{NULL} for a marginal CIF or a numeric vector of length
 \code{ncol(Z.X)} to request a conditional CIF. Numeric entries fix those covariates
-to the given value, whereas \code{NA} entries are integrated out.}
+at the given value, whereas \code{NA} entries are integrated out. See \emph{Details}.}
 
 \item{fix_Z.W}{Same as \code{fix_Z.X} but for the prevalence model covariates;
 must be \code{NULL} to obtain a marginal CIF.}
 
-\item{pst.samples}{Integer; number of posterior samples drawn when computing the
-predictive CIF. Cannot exceed the total available posterior samples in \code{mod}.}
+\item{pst.samples}{Integer; number of posterior samples to draw when computing the
+posterior predictive CIF. Must not exceed the total available posterior samples
+in \code{mod}. Larger values can improve precision but increase computation time.}
 
-\item{perc}{Numeric vector of cumulative probabilities in \eqn{[0,1]} for which
-the function returns time points if \code{ppd.type = "quantiles"}.}
+\item{perc}{A numeric vector of cumulative probabilities (i.e., percentiles in (0,1))
+for which time points are returned when \code{ppd.type = "quantiles"}.}
 
 \item{type}{Character; \code{"xstar"} for the mixture CIF (prevalence + incidence),
-or \code{"x"} for the CIF of only the non-prevalent subpopulation.}
+or \code{"x"} for the non-prevalent (healthy) population CIF.}
 
-\item{ppd.type}{Character; \code{"percentiles"} returns cumulative probabilities
-at user-specified time points \code{quant}, whereas \code{"quantiles"} returns
-time points for user-specified cumulative probabilities \code{perc}.}
+\item{ppd.type}{Character; \code{"percentiles"} to return cumulative probabilities
+at times \code{quant}, or \code{"quantiles"} to return time points at cumulative
+probabilities \code{perc}.}
 
-\item{quant}{Numeric vector of time points for which the function returns
-cumulative probabilities if \code{ppd.type = "percentiles"}.}
+\item{quant}{A numeric vector of time points for which the function returns
+cumulative probabilities when \code{ppd.type = "percentiles"}.}
 }
 \value{
 A \code{list} with some or all of the following elements:
@@ -65,38 +66,6 @@ If \code{ppd.type = "percentiles"}, this is a copy of the input \code{quant}
 \item{\code{perc}}{
 If \code{ppd.type = "quantiles"}, this is a copy of the input \code{perc}
 (cumulative probabilities).
-}
-}
-
-Posterior Predictive Cumulative Incidence Function
-
-Computes the posterior predictive cumulative incidence function (CIF) from a
-\link{Bayes.2S} prevalence-incidence mixture model. The function can return
-\emph{quantiles} corresponding to user-specified \emph{percentiles} (i.e., time
-points at which the cumulative probability reaches certain thresholds), or
-vice versa (\emph{percentiles} at user-specified \emph{quantiles}). Additionally,
-it allows for marginal or conditional CIFs of either the mixture population
-(including baseline prevalence) or the non-prevalent (healthy) subpopulation.
-
-A \code{list} containing:
-\describe{
-\item{\code{med.cdf}}{
-\itemize{
-\item If \code{ppd.type = "quantiles"}: the median time (quantile) across
-posterior samples for each cumulative probability in \code{perc}.
-\item If \code{ppd.type = "percentiles"}: the median cumulative probability
-across posterior samples for each time in \code{quant}.
-}
-}
-\item{\code{med.cdf.ci}}{
-A 2-row matrix (2.5\\% and 97.5\\% posterior quantiles) of the same dimension
-as \code{med.cdf}, representing uncertainty intervals.
-}
-\item{\code{quant}}{
-If \code{ppd.type = "percentiles"}, a copy of the input \code{quant}.
-}
-\item{\code{perc}}{
-If \code{ppd.type = "quantiles"}, a copy of the input \code{perc}.
 }
 }
 }
@@ -134,36 +103,10 @@ probabilities), returns corresponding \emph{quantiles} (time points).
 \item \code{ppd.type = "percentiles"}: Given a set of \code{quant} (time points),
 returns corresponding \emph{percentiles} (cumulative probabilities).
 }
-
-In a prevalence-incidence mixture model, a fraction of the population may
-already have the event (prevalent cases) at baseline, while the rest (healthy
-subpopulation) has not. Two types of CIF are supported:
-\itemize{
-\item \code{type = "xstar"} (mixture CIF): Includes the baseline prevalence
-as a point-mass at time zero, followed by cumulative incidence.
-\item \code{type = "x"} (non-prevalent CIF): Excludes prevalent cases,
-showing incidence only among those healthy at baseline.
-}
-The user can request:
-\itemize{
-\item \emph{marginal} CIF by specifying \code{fix_Z.X = NULL} and
-\code{fix_Z.W = NULL}, integrating over all covariates.
-\item \emph{conditional} CIF by partially or fully fixing covariate values
-in \code{fix_Z.X} (and optionally \code{fix_Z.W}), with \code{NA} entries
-integrated out.
-}
-
-The function operates in two main modes:
-\itemize{
-\item \code{ppd.type = "quantiles"}: Given a set of \code{perc} (cumulative
-probabilities), returns corresponding \emph{quantiles} (time points).
-\item \code{ppd.type = "percentiles"}: Given a set of \code{quant} (time points),
-returns corresponding \emph{percentiles} (cumulative probabilities).
-}
 }
 \examples{
 \dontrun{
-# Generate data according to the Klausch et al. (2025) PIM
+# Generate data according to the Klausch et al. (2024) PIM
 set.seed(2025)
 dat <- gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
                p = 1, p.discrete = 1,

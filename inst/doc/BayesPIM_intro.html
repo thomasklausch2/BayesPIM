@@ -694,8 +694,59 @@ models contain the same covariates, so that the approach of conditioning
 via <code>fix_Z.X</code> only, described above, likely is more commonly
 used.</p>
 </div>
+<div id="information-criteria" class="section level2">
+<h2>Information Criteria</h2>
+<p>Bayesian information criteria are a straightforward approach for
+model selection. The function <code>get.IC_2S.r</code> returns the
+Widely Applicable Information Criterion (WAIC-1/-2) and the Divergence
+Information Criterion (DIC), as defined in Gelman et al. (2014). The
+information criteria are useful for selecting the best distribution for
+the incidence times. <code>bayes.2S</code> offers the Weibull,
+log-logistic, and normal distributions. In addition, we can obtain an
+exponential transition time through selecting a Weibull model and
+constraining the AFT scale parameter <span class="math inline">\(\sigma\)</span> to one. In <code>bayes.2S</code>
+this is achieved through setting <code>dist=&#39;weibull</code>,
+<code>sig.prior.X = 1</code>, and <code>fix.sigma.X=T</code>. To
+illustrate, we will compare the Weibull model fitted above with an
+exponential model. Note that the resulting exponential model is
+equivalent to a Markov model.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># An exponential model</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>mod_exp <span class="ot">=</span> <span class="fu">bayes.2S</span>( <span class="at">Vobs =</span> dat<span class="sc">$</span>Vobs,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                <span class="at">Z.X =</span> dat<span class="sc">$</span>Z,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                <span class="at">Z.W =</span> dat<span class="sc">$</span>Z,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                <span class="at">r=</span> dat<span class="sc">$</span>r,</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>                <span class="at">kappa =</span> <span class="fl">0.7</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>                <span class="at">update.kappa =</span> F,</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>                <span class="at">ndraws=</span> <span class="fl">1e4</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>                <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>                <span class="at">prop.sd.X =</span> <span class="fl">0.008</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>                <span class="at">parallel =</span> T,</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>                <span class="at">fix.sigma.X =</span> T,</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>                <span class="at">sig.prior.X =</span> <span class="dv">1</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>                <span class="at">dist.X =</span> <span class="st">&#39;weibull&#39;</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>)</span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; Searching starting values by one naive run </span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; Starting Gibbs sampler with 3 chains and 5000 iterations.</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; Now doing main run. </span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; Starting Gibbs sampler with 4 chains and 10000 iterations.</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co"># Get information criteria</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="fu">get.IC_2S</span>(mod, <span class="at">samples =</span> <span class="fl">1e3</span>)</span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt;         WAIC1    WAIC2      DIC</span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; [1,] 2083.009 2083.108 2082.811</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="fu">get.IC_2S</span>(mod_exp, <span class="at">samples =</span> <span class="fl">1e3</span>)</span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt;         WAIC1    WAIC2      DIC</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; [1,] 2392.197 2392.268 2393.181</span></span></code></pre></div>
+<p>As can be seen, the exponential model has higher information criteria
+values, suggesting that the Weibull model has better fit. This is
+plausible, since the data were generated from a Weibull
+distribution.</p>
+</div>
 <div id="references" class="section level2">
 <h2>References</h2>
+<p>Gelman, A., Hwang, J., &amp; Vehtari, A. (2014). Understanding
+predictive information criteria for Bayesian models. Stat Comput, 24(6),
+997–1016. <a href="https://doi.org/10.1007/s11222-013-9416-2" class="uri">https://doi.org/10.1007/s11222-013-9416-2</a></p>
 <p>T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). “A
 Bayesian prevalence-incidence mixture model for screening outcomes with
 misclassification.” arXiv:2412.16065.</p>
