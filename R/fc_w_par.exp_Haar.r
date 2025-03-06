@@ -1,8 +1,3 @@
-#' fc_w_par.exp_Haar
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 fc_w_par.exp_Haar <- function(y,X,sig_inv_Xt){
   p = ncol(X)
   n       = length(y)

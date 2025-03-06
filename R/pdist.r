@@ -1,8 +1,3 @@
-#' pdist
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 pdist <- function(q, par, dist = "exp") {
   if (dist == "exp") {
     return(pexp(q, rate = par[, 1]))

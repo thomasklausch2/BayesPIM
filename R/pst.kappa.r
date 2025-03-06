@@ -1,8 +1,3 @@
-#' pst.kappa
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 pst.kappa = function( Vobs, j_, a = 1, b = 1, g, r, g.fixed){
   delta = as.numeric(sapply( Vobs, function(x) is.finite( x[length(x)] )) ) + g.fixed
   rho = sum( delta )

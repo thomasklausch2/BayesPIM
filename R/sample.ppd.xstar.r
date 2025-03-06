@@ -1,8 +1,3 @@
-#' sample.ppd.xstar
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 sample.ppd.xstar = function(par.list, Z.X, Z.W, dist.X, s, g.fixed, type) {
   n = nrow(Z.X)
   x = sample.ppd.vanilla(par.list, Z.X, dist.X, s)

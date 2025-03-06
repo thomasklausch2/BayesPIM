@@ -1,8 +1,3 @@
-#' LL.aft
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 LL.aft <- function(par, t, Z, dist) {
   
   p <- length(par)

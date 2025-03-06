@@ -1,8 +1,3 @@
-#' find.ab
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 find.ab = function(m,s){
   b0 = function(a0,m) a0/m-a0
   obj = function(a,m,s) (a*b0(a,m)/((a+b0(a,m))^2*(a+b0(a,m)+1)) - s^2)^2

@@ -1,8 +1,3 @@
-#' augment.X_rcpp
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 augment.X_rcpp = function(pobs_vec, Vobs, Vobs_L, Vobs_R, cur.par.X, dist.X, C, collapsed.g){
   pobs_norm = pnorm_rcpp(pobs_vec,
                          Vobs,

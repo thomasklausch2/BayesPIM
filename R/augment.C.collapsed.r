@@ -1,8 +1,3 @@
-#' augment.C.collapsed
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 augment.C.collapsed = function(w_sums, Vobs, kappa, theta1, r, g.fixed){
   
   n    = length(Vobs)

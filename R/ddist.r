@@ -1,8 +1,3 @@
-#' ddist
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 ddist <- function(x, par, dist = "exp") {
   if (dist == "exp") {
     return(dexp(x, rate = par[, 1]))

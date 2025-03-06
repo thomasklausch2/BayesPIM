@@ -1,8 +1,3 @@
-#' r.trdist
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 r.trdist =  function(par, a = 0, b=Inf, dist , tol = 1e-8){ 
     n = length(a)
     cdf.a = pdist(a, par, dist)

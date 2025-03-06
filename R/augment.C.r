@@ -1,8 +1,3 @@
-#' augment.C
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 augment.C = function(pobs, Vobs, X, kappa, theta1, r, g.fixed){
 
   n    = length(Vobs)

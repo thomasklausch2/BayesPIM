@@ -1,8 +1,3 @@
-#' log_likelihood_gengamma
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 log_likelihood_gengamma <- function(params, x, z) {
   # Extract beta, log_sigma, and k from params
   beta <- params[1:(length(params) - 2)]

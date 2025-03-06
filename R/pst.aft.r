@@ -1,8 +1,3 @@
-#' pst.aft
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 pst.aft <- function(par, t, Z, tau, sig.prior, k.prior, dist, beta.prior = 't') {
   p <- length(par)
   beta <- par[1:(p-1)]

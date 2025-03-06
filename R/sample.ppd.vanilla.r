@@ -1,8 +1,3 @@
-#' sample.ppd.vanilla
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 sample.ppd.vanilla = function(par.list, Z.X, dist.X, s) {
   par    = as.matrix(par.list[1])
   p1.X   = ncol(Z.X) + 1

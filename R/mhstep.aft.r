@@ -1,8 +1,3 @@
-#' mhstep.aft
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 mhstep.aft <- function(x, t, Z, tau, sig.prior, k.prior, prop.var = diag(1, length(x)), dist, fix.sigma = FALSE, fix.k = F, beta.prior = 't') {
   x_ <- mvrnorm(1, x, prop.var)
   if (fix.sigma) {

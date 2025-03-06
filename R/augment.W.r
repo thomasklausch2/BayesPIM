@@ -1,8 +1,3 @@
-#' augment.W
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 augment.W <- function(g, mu_w){
   n = length(g)
   n1 = sum(g)

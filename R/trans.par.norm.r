@@ -1,8 +1,3 @@
-#' trans.par.norm
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 trans.par.norm = function(p1, p2, v1, v2, cr, Z1, Z2, a){
   mu1 = Z1 %*% as.matrix(p1)
   mu2 = Z2 %*% as.matrix(p2)

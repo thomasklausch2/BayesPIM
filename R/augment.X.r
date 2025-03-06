@@ -1,8 +1,3 @@
-#' augment.X
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 augment.X = function(pobs_vec, Vobs, Vobs_L, Vobs_R, cur.par.X, dist.X, C, collapsed.g){
   m   = sapply(Vobs, length)-1
   par = apply( cbind(cur.par.X,m), 1, function(x) matrix( rep(x[1:2], x[3]) , nrow=x[3], ncol= 2, T) )

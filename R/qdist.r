@@ -1,8 +1,3 @@
-#' qdist
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 qdist <- function(p, par, dist = "exp") {
   if (dist == "exp") {
     return(qexp(p, rate = par[, 1]))

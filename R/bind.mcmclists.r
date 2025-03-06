@@ -1,8 +1,3 @@
-#' bind.mcmclists
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 bind.mcmclists = function(pr, r){
   l = length(pr)
   b = list()

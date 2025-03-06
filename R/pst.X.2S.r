@@ -1,8 +1,3 @@
-#' pst.X.2S
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 pst.X.2S  = function(par, dist, S, d, L, R){
   q = rep(NA, length(d))
   q[d==1] = r.trdist(par[d==1,, drop=F], a = L[d==1], b = R[d==1], dist)

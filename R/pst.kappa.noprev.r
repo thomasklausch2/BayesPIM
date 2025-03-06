@@ -1,8 +1,3 @@
-#' pst.kappa.noprev
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 pst.kappa.noprev = function( Vobs, j_, a = 1, b = 1){
   n_ = sum( sapply( Vobs, function(x) is.finite( x[length(x)] )) )
   m  = sapply(Vobs, length)

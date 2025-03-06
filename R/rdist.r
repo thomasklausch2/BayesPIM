@@ -1,8 +1,3 @@
-#' rdist
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 rdist <- function(n, par, dist = "exp") {
   if (dist == "exp") {
     return(rexp(n, rate = par[, 1]))

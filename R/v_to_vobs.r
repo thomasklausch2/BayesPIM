@@ -1,8 +1,3 @@
-#' v_to_vobs
-#'
-#' @param x Numeric; Description of x
-#' @return Numeric; Description of the return value
-#' @export
 v_to_vobs = function(V, X, kappa, C, baseline.test){
 
   kap = kappa
