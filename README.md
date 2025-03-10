@@ -62,4 +62,4 @@ gelman.diag(mod$par.X.bi) # Gelman convergence diagnostics
 
 T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). “A Bayesian
 prevalence-incidence mixture model for screening outcomes with
-misclassification.” arXiv:2412.16065.
+misclassification.” arXiv:2412.16065. https://arxiv.org/abs/2412.16065
