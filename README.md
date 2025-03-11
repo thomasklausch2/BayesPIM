@@ -22,7 +22,7 @@ devtools::install_github("thomasklausch2/BayesPIM", build_vignettes = FALSE)
 
 ## Example
 
-This is a basic example of data generation and use model fitting.
+This is a basic example of data generation and model fitting.
 
 ``` r
 library(BayesPIM)
