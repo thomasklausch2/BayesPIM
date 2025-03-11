@@ -2,12 +2,12 @@
 % Please edit documentation in R/search.prop.sd_seq.r
 \name{search.prop.sd_seq}
 \alias{search.prop.sd_seq}
-\title{Automated Heuristic Search of a Proposal Standard Deviation for \code{Bayes.2S} (sequential processing)}
+\title{Automated Heuristic Search of a Proposal Standard Deviation for \code{bayes.2S} (sequential processing)}
 \usage{
 search.prop.sd_seq(m, ndraws = 1000, succ.min = 3, acc.bounds.X = c(0.2, 0.25))
 }
 \arguments{
-\item{m}{A model object of class \code{Bayes.2S}.}
+\item{m}{A model object of class \code{bayes.2S}.}
 
 \item{ndraws}{Starting number of MCMC iterations after which the acceptance rate
 is first evaluated. Defaults to 1000.}
@@ -27,7 +27,7 @@ A \code{list} with the following elements:
 }
 }
 \description{
-The \link{Bayes.2S} Gibbs sampler uses a Metropolis step for sampling the
+The \link{bayes.2S} Gibbs sampler uses a Metropolis step for sampling the
 incidence model parameters and requires specifying a standard deviation for
 the normal proposal (jumping) distribution. This function uses a heuristic
 algorithm to find a proposal distribution standard deviation such that the
@@ -35,7 +35,7 @@ Metropolis sampler accepts proposed draws at an acceptance rate within the
 user-defined interval (by default around 20--25\%). This is the sequential processing analogue to \link{search.prop.sd} which does parallel processing by default.
 }
 \details{
-Starting from an initial \code{Bayes.2S} model object \code{m}, the function
+Starting from an initial \code{bayes.2S} model object \code{m}, the function
 attempts to calibrate the standard deviation of the proposal distribution.
 Specifically, it:
 \enumerate{

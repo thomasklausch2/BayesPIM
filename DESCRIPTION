@@ -11,8 +11,10 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 LinkingTo: Rcpp
-Imports: Rcpp, coda, mvtnorm, MASS, ggamma, doParallel, foreach, parallel, actuar
-Depends: coda
+Imports: Rcpp, mvtnorm, MASS, ggamma, doParallel, foreach, parallel, actuar
+Depends: 
+    R (>= 3.5.0),
+    coda
 Suggests: 
     knitr,
     rmarkdown

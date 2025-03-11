@@ -1,6 +1,6 @@
-#' Automated Heuristic Search of a Proposal Standard Deviation for \code{Bayes.2S}
+#' Automated Heuristic Search of a Proposal Standard Deviation for \code{bayes.2S}
 #'
-#' The \link{Bayes.2S} Gibbs sampler uses a Metropolis step for sampling the
+#' The \link{bayes.2S} Gibbs sampler uses a Metropolis step for sampling the
 #' incidence model parameters and requires specifying a standard deviation for
 #' the normal proposal (jumping) distribution. This function uses a heuristic
 #' algorithm to find a proposal distribution standard deviation such that the
@@ -8,7 +8,7 @@
 #' user-defined interval (by default around 20--25%).
 #'
 #' @details
-#' Starting from an initial \code{Bayes.2S} model object \code{m}, the function
+#' Starting from an initial \code{bayes.2S} model object \code{m}, the function
 #' attempts to calibrate the standard deviation of the proposal distribution.
 #' Specifically, it:
 #' \enumerate{
@@ -27,7 +27,7 @@
 #' is considered acceptable, and the process continues until \code{succ.min} consecutive
 #' successes (doubles) are achieved. 
 #'
-#' @param m A model object of class \code{Bayes.2S}.
+#' @param m A model object of class \code{bayes.2S}.
 #' @param ndraws Starting number of MCMC iterations after which the acceptance rate
 #'   is first evaluated. Defaults to 1000.
 #' @param succ.min The algorithm doubles the number of MCMC draws \code{succ.min} times

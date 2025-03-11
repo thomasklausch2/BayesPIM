@@ -2,9 +2,6 @@ ddist <- function(x, par, dist = "exp") {
   if (dist == "exp") {
     return(dexp(x, rate = par[, 1]))
   }
-  if (dist == "weibull2") {
-    return(dweibull2(x, beta = par[, 2], theta = par[, 1]))
-  }
   if (dist == "gamma") {
     return(dgamma(x, shape = par[, 1], rate = par[, 2]))
   }

@@ -23,6 +23,7 @@
 #' Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016. https://doi.org/10.1007/s11222-013-9416-2
 #' 
 #' @examples
+#' \dontrun{
 #' # Generate data according to the Klausch et al. (2024) PIM
 #' set.seed(2025)
 #' dat = gen.dat(kappa = 0.7, n= 1e3, theta = 0.2,
@@ -38,7 +39,7 @@
 #'                 Z.W = dat$Z,
 #'                 r= dat$r,
 #'                 kappa = 0.7,
-#'                 update.kappa = F,
+#'                 update.kappa = FALSE,
 #'                 ndraws= 1e4,
 #'                 chains = 4,
 #'                 prop.sd.X = 0.008,
@@ -48,6 +49,7 @@
 #' 
 #' # Get information criteria
 #' get.IC_2S(mod, samples = 1e3)
+#' }
 #' 
 #' @export
 get.IC_2S = function(mod, samples = nrow(mod$par.X.bi[[1]]), cores = NULL){
@@ -71,7 +73,7 @@ get.IC_2S = function(mod, samples = nrow(mod$par.X.bi[[1]]), cores = NULL){
   registerDoParallel(cl)
   s = round(seq (1, samples, length.out = cores+1))
   pst.mean = apply(m.X, 2, mean) 
-  
+
   run = foreach(j = 1:cores # ndraws=rep(mc, cores)+1:cores
                 , .export = c('pdist', 'qdist', 'rdist', 'ddist', 'Lobs_2S',
                               'ploglog', 'rloglog','qloglog', 'dloglog','P_vobs', 'geom', 'geom.inf', 'P_vobs2',

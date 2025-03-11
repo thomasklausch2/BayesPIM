@@ -2,9 +2,6 @@ pdist <- function(q, par, dist = "exp") {
   if (dist == "exp") {
     return(pexp(q, rate = par[, 1]))
   }
-  if (dist == "weibull2") {
-    return(pweibull2(q, beta = par[, 2], theta = par[, 1]))
-  }
   if (dist == "gamma") {
     return(pgamma(q, shape = par[, 1], rate = par[, 2]))
   }

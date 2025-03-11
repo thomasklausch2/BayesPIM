@@ -17,7 +17,7 @@ You can install the development version of BayesPIM from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("thomasklausch2/BayesPIM", build_vignettes = FALSE)
+devtools::install_github("thomasklausch2/BayesPIM")
 ```
 
 ## Example

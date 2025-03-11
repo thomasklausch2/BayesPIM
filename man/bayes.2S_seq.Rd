@@ -102,6 +102,10 @@ bayes.2S_seq(
 \item{par.exp}{Logical. If \code{TRUE}, the parameter expansion technique of Liu & Wiu (1999) with a Haar prior is employed for updating the regression coefficients (\eqn{\beta_{wj}}) in the prevalence model. Experimental: tests suggest that it does not improve convergence or reduce autocorrelation.}
 
 \item{collapsed.g}{Logical. If \code{TRUE}, the latent prevalence class membership update in the Gibbs sampler is integrated (collapsed) over the latent incidence time variable. This setting is recommended to improve convergence.}
+
+\item{k.prior}{Experimental prior parameter for generalized gamma; currently not used.}
+
+\item{fix.k}{Experimental fixing of prior parameter for generalized gamma; currently not used.}
 }
 \value{
 A list containing the following elements:
@@ -125,7 +129,7 @@ Estimates the Pattern Mixture model of Klausch et al. (2025) using a Bayesian Gi
 This function is dentical to \link{bayes.2S} with the only difference being that the \code{chains} MCMC chains are run in sequence using a \code{for} loop instead of parallel processing. This can be useful if operating systems do not support \code{foreach} or for simulation studies that parallize replication of experiments using \code{foreach} and/or need a worker that does not apply \code{foreach} internally.
 }
 \examples{
-
+\dontrun{
 library(BayesPIM)
 
 # Generate data according to the Klausch et al. (2025) PIM
@@ -158,8 +162,9 @@ apply(mod$ac.X, 2, mean)  # Acceptance rates per chain
 gelman.diag(mod$par.X.bi)  # Gelman convergence diagnostics
 
 # Model updating
-mod_update <- bayes.2S(prev.run = mod)  # Adds ndraws additional MCMC draws
-mod_update <- bayes.2S(prev.run = mod, ndraws.update = 1e3)  # Adds ndraws.update additional MCMC draws
+mod_update <- bayes.2S(prev.run = mod)      # Adds ndraws additional MCMC draws
+mod_update <- bayes.2S(prev.run = mod, 
+                       ndraws.update = 1e3) # Adds ndraws.update additional MCMC draws
 
 # Example with kappa estimated/updated
 mod2 <- bayes.2S_seq(Vobs = dat$Vobs,
@@ -168,7 +173,7 @@ mod2 <- bayes.2S_seq(Vobs = dat$Vobs,
                  r = dat$r,
                  kappa = 0.7,
                  update.kappa = TRUE,
-                 kappa.prior = c(0.7, 0.1), # Beta prior for kappa mean centered on 0.6 with s.d. of 0.1
+                 kappa.prior = c(0.7, 0.1), # Beta prior, mean = 0.7, s.d. = 0.1
                  ndraws = 1e4,
                  chains = 4,
                  prop.sd.X = 0.008,
@@ -178,6 +183,7 @@ mod2 <- bayes.2S_seq(Vobs = dat$Vobs,
 # Inspect results
 mod2$runtime # runtime of Gibbs sampler
 plot( trim.mcmc( mod2$par.X.all, thining = 10) ) # kappa returned as part of the mcmc.list
+}
 
 }
 \references{

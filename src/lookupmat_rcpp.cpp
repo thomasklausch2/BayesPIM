@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @export
 // [[Rcpp::export]]
 NumericMatrix lookUpMat_rcpp(List L, IntegerVector a) {
   int n = a.size();

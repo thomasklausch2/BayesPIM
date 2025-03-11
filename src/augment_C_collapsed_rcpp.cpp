@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @export
 // [[Rcpp::export]]
 NumericVector augment_C_collapsed_rcpp(NumericVector w_sums, List Vobs, double kappa, NumericVector theta1, NumericVector r, LogicalVector g_fixed) {
   int n = Vobs.size();

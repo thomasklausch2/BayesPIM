@@ -1,19 +1,16 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @export
 // Utility function to mimic geom function
 double geom(int j, double kappa) {
   return kappa * std::pow(1 - kappa, j - 1);
 }
 
-//' @export
 // Utility function to mimic geom.inf function
 double geom_inf(int j, double kappa) {
   return std::pow(1 - kappa, j - 1);
 }
 
-//' @export
 // [[Rcpp::export]]
 List P_vobs_Rcpp(List Vobs, double kappa) {
   int n = Vobs.size();

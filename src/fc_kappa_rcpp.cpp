@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @export
 // [[Rcpp::export]]
 double fc_kappa_rcpp(List Vobs, NumericVector j_, double a, double b, NumericVector g, NumericVector r, LogicalVector g_fixed) {
   int n = Vobs.size();

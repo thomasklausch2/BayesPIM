@@ -71,7 +71,7 @@ If \code{ppd.type = "quantiles"}, this is a copy of the input \code{perc}
 }
 \description{
 Computes the posterior predictive cumulative incidence function (CIF) from a
-\link{Bayes.2S} prevalence-incidence mixture model. The function can return
+\link{bayes.2S} prevalence-incidence mixture model. The function can return
 \emph{quantiles} corresponding to user-specified \emph{percentiles} (i.e., time
 points at which the cumulative probability reaches certain thresholds), or
 vice versa (\emph{percentiles} at user-specified \emph{quantiles}). Additionally,
@@ -115,7 +115,7 @@ dat <- gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
                sigma.X = 0.2, mu.X = 5, dist.X = "weibull",
                prob.r  = 1)
 
-# Fit a Bayes.2S model (example with moderate ndraws = 2e4)
+# Fit a bayes.2S model (example with moderate ndraws = 2e4)
 mod <- bayes.2S(Vobs = dat$Vobs, Z.X = dat$Z, Z.W = dat$Z, r = dat$r,
                 kappa = 0.7, update.kappa = FALSE, ndraws = 1e4,
                 chains = 4, prop.sd.X = 0.008, parallel = TRUE,

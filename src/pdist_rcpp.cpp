@@ -2,7 +2,6 @@
 #include "pdist_rcpp.h"
 using namespace Rcpp;
 
-//' @export
 // [[Rcpp::export]]
 NumericVector pdist_rcpp(NumericVector q, NumericMatrix par, std::string dist) {
   int n = q.size();

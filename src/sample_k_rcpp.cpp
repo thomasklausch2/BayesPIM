@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-//' @export
+
 // [[Rcpp::export]]
 IntegerVector sample_k_rcpp(List pobs_norm) {
   int n = pobs_norm.size();

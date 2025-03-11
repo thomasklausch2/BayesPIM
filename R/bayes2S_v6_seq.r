@@ -43,6 +43,9 @@
 #' @param par.exp Logical. If \code{TRUE}, the parameter expansion technique of Liu & Wiu (1999) with a Haar prior is employed for updating the regression coefficients (\eqn{\beta_{wj}}) in the prevalence model. Experimental: tests suggest that it does not improve convergence or reduce autocorrelation.
 #' @param collapsed.g Logical. If \code{TRUE}, the latent prevalence class membership update in the Gibbs sampler is integrated (collapsed) over the latent incidence time variable. This setting is recommended to improve convergence.
 #'
+#' @param k.prior Experimental prior parameter for generalized gamma; currently not used.
+#' @param fix.k Experimental fixing of prior parameter for generalized gamma; currently not used.
+#'
 #' @return A list containing the following elements:
 #'
 #' \item{par.X.all}{An \code{mcmc.list} of MCMC samples for the incidence and prevalence model parameters.}
@@ -63,7 +66,7 @@
 #' J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, doi: 10.2307/2669940.
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' library(BayesPIM)
 #' 
 #' # Generate data according to the Klausch et al. (2025) PIM
@@ -96,8 +99,9 @@
 #' gelman.diag(mod$par.X.bi)  # Gelman convergence diagnostics
 #' 
 #' # Model updating
-#' mod_update <- bayes.2S(prev.run = mod)  # Adds ndraws additional MCMC draws
-#' mod_update <- bayes.2S(prev.run = mod, ndraws.update = 1e3)  # Adds ndraws.update additional MCMC draws
+#' mod_update <- bayes.2S(prev.run = mod)      # Adds ndraws additional MCMC draws
+#' mod_update <- bayes.2S(prev.run = mod, 
+#'                        ndraws.update = 1e3) # Adds ndraws.update additional MCMC draws
 #' 
 #' # Example with kappa estimated/updated
 #' mod2 <- bayes.2S_seq(Vobs = dat$Vobs,
@@ -106,7 +110,7 @@
 #'                  r = dat$r,
 #'                  kappa = 0.7,
 #'                  update.kappa = TRUE,
-#'                  kappa.prior = c(0.7, 0.1), # Beta prior for kappa mean centered on 0.6 with s.d. of 0.1
+#'                  kappa.prior = c(0.7, 0.1), # Beta prior, mean = 0.7, s.d. = 0.1
 #'                  ndraws = 1e4,
 #'                  chains = 4,
 #'                  prop.sd.X = 0.008,
@@ -116,6 +120,7 @@
 #' # Inspect results
 #' mod2$runtime # runtime of Gibbs sampler
 #' plot( trim.mcmc( mod2$par.X.all, thining = 10) ) # kappa returned as part of the mcmc.list
+#' }
 #' 
 #' @export
 bayes.2S_seq <- function(

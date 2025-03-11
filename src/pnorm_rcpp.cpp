@@ -3,7 +3,7 @@
 using namespace Rcpp;
 
 // pdist function defined earlier
-//' @export
+
 // [[Rcpp::export]]
 List pnorm_rcpp(NumericVector pobs_vec,
                         List Vobs,

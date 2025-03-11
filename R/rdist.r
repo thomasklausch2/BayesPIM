@@ -2,9 +2,6 @@ rdist <- function(n, par, dist = "exp") {
   if (dist == "exp") {
     return(rexp(n, rate = par[, 1]))
   }
-  if (dist == "weibull2") {
-    return(rweibull2(n, beta = par[, 2], theta = par[, 1]))
-  }
   if (dist == "gamma") {
     return(rgamma(n, shape = par[, 1], rate = par[, 2]))
   }
