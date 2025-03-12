@@ -9,7 +9,7 @@ Description: Models time-to-event data from interval-censored
   details, see the package vignette ("BayesPIM_intro"). Further details can be 
   found in T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024),
   "A Bayesian prevalence-incidence mixture model for screening outcomes with 
-  misclassification", doi:10.48550/arXiv.2412.16065.
+  misclassification", <doi:10.48550/arXiv.2412.16065>.
 License: MIT + file LICENSE
 URL: https://github.com/thomasklausch2/bayespim
 BugReports: https://github.com/thomasklausch2/BayesPIM/issues
