@@ -32,7 +32,7 @@ The computation is performed by evaluating log-likelihood values for MCMC sample
 Parallelization is available via the \code{foreach} package, utilizing multiple cores if \code{cores} is set accordingly. If \code{cores = NULL}, all available cores will be used.
 }
 \examples{
-\dontrun{
+\donttest{
 # Generate data according to the Klausch et al. (2024) PIM
 set.seed(2025)
 dat = gen.dat(kappa = 0.7, n= 1e3, theta = 0.2,
@@ -52,7 +52,7 @@ mod = bayes.2S( Vobs = dat$Vobs,
                 ndraws= 1e4,
                 chains = 4,
                 prop.sd.X = 0.008,
-                parallel = T,
+                parallel = TRUE,
                 dist.X = 'weibull'
 )
 

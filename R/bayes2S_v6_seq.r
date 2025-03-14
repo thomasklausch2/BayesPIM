@@ -66,7 +66,7 @@
 #' J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, doi: 10.2307/2669940.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(BayesPIM)
 #' 
 #' # Generate data according to the Klausch et al. (2025) PIM
@@ -133,7 +133,7 @@ bayes.2S_seq <- function(
   # Group 2: Basic model settings
   dist.X = 'weibull', 
   kappa = 0.5, 
-  update.kappa = F, 
+  update.kappa = FALSE, 
   kappa.prior = NULL, 
   
   # Group 3: Main MCMC sampler settings
@@ -141,8 +141,8 @@ bayes.2S_seq <- function(
   prop.sd.X = NULL, 
   chains = 3, 
   thining = 1, 
-  parallel = T, 
-  update.till.converge = F, 
+  parallel = TRUE, 
+  update.till.converge = FALSE, 
   maxit = Inf, 
   conv.crit = 'upper', 
   min_effss = chains * 10, 
@@ -152,24 +152,24 @@ bayes.2S_seq <- function(
   beta.prior.X = 1, 
   sig.prior.X = 1, 
   tau.w = 1, 
-  fix.sigma.X = F, 
+  fix.sigma.X = FALSE, 
   
   # Group 5: Updating previous run settings
   prev.run = NULL, 
-  update.burnin = T, 
+  update.burnin = TRUE, 
   ndraws.update = NULL, 
   
   # Group 6: Additional model flags
-  prev = T, 
-  vanilla = F, 
+  prev = TRUE, 
+  vanilla = FALSE, 
   ndraws.naive = 5000, 
   naive.run.prop.sd.X = prop.sd.X, 
-  par.exp = F, 
-  collapsed.g = T, 
+  par.exp = FALSE, 
+  collapsed.g = TRUE, 
   
   # Group 7: Experimentals
   k.prior = 1, 
-  fix.k = F
+  fix.k = FALSE
 ) {
   
   t0 = Sys.time()
@@ -208,7 +208,7 @@ bayes.2S_seq <- function(
     kappa.prior = prev.run$kappa.prior
     fix.k = prev.run$fix.k
     prev.runtime = prev.run$runtime
-    cat('Updating previous MCMC run. \n')
+    message('Updating previous MCMC run. \n')
   }
   
   if(update.kappa & !is.null(kappa.prior)){
@@ -269,44 +269,39 @@ bayes.2S_seq <- function(
   sig_inv = solve(t(Z1.W) %*% Z1.W + diag(rep(tau.w^-1,ncol(Z1.W)) ))
   sig_inv_Xt = sig_inv %*% t(Z1.W)
   
-  # Get random seeds
-  s = sample(1:10^5,chains, replace=F)
-  
   if(!vanilla & is.null(prev.run)){
     adapted = 2
-    cat('Searching starting values by one naive run \n')
-    done = F
+    message('Searching starting values by one naive run \n')
+    done = FALSE
     while(!done){
-      mod.simple = bayes.2S_seq(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = T,
+      mod.simple = bayes.2S_seq(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = TRUE,
                                 ndraws=ndraws.naive, chains=3, thining=1, prop.sd.X=naive.run.prop.sd.X,
                                 beta.prior.X = beta.prior.X, sig.prior.X = sig.prior.X, fix.sigma.X = fix.sigma.X,
-                                prev.run = NULL, dist.X = dist.X, update.burnin = T,
-                                beta.prior = 't', vanilla = T)
+                                prev.run = NULL, dist.X = dist.X, update.burnin = TRUE,
+                                beta.prior = 't', vanilla = TRUE)
       pars.simple = as.matrix(mod.simple$par.X.bi)
-      ini = pars.simple[sample(1: nrow(pars.simple), chains, replace=F),]
+      ini = pars.simple[sample(1: nrow(pars.simple), chains, replace=FALSE),]
       ac.rates = apply(mod.simple$ac.X,2, mean)
       if( sum(ac.rates > .85) >0) {
-        cat('Naive run acceptance rates >0.85. Increasing naive.run.proposal.sd.X.\n')
+        message('Naive run acceptance rates >0.85. Increasing naive.run.proposal.sd.X.\n')
         naive.run.prop.sd.X = naive.run.prop.sd.X*adapted
         adapted = adapted + 1
       }
       if( sum(ac.rates < .15) >0) {
-        cat('Naive run acceptance rates <0.15. Decreasing naive.run.proposal.sd.X.\n')
+        message('Naive run acceptance rates <0.15. Decreasing naive.run.proposal.sd.X.\n')
         naive.run.prop.sd.X = naive.run.prop.sd.X/adapted
         adapted = adapted + 1
       }
       if(adapted>20) stop('Cannot find naive.run.prop.sd.X that produces good acceptance rate.')
-      if(sum(ac.rates > .85) == 0 & sum(ac.rates < .15) == 0) done = T
+      if(sum(ac.rates > .85) == 0 & sum(ac.rates < .15) == 0) done = TRUE
     }
-    cat('Now doing main run. \n')
+    message('Now doing main run. \n')
   }
   
   ## Start run
   run = list()  
   for(j in 1:chains){
-    
-    set.seed(s[j])
-    
+
     # Begin Gibbs
     ac.X = ac.S = 1
     
@@ -371,7 +366,7 @@ bayes.2S_seq <- function(
     }
     
     i=1
-    log.pst.X  = pst.aft(par=cur.par.Xreg[i,, drop=F], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X,
+    log.pst.X  = pst.aft(par=cur.par.Xreg[i,, drop=FALSE], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X,
                          k.prior = k.prior,
                          dist=dist.X, beta.prior = beta.prior)
     if(is.infinite(log.pst.X) ) stop('Bad starting values')
@@ -382,14 +377,14 @@ bayes.2S_seq <- function(
     
     for(i in 1:ndraws){
       # if (i %% 100 == 0) {
-      #   cat("Completed", i, "of", n, "iterations\n")
+      #   message("Completed", i, "of", n, "iterations\n")
       # }
       #Update  X parameters
       # if(i == burnin) {
       #   S = cov(cur.par.Xreg[(burnin-101):(burnin-1),])
       #   prop.sd.X.mat = 2.4^2/(nrow(Z1.X)+p1.X+1) * S #+ 0.0001 * diag(1, p1.X+1)
       # }
-      mh  = mhstep.aft(x=cur.par.Xreg[i,, drop=F], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X, k.prior = k.prior,
+      mh  = mhstep.aft(x=cur.par.Xreg[i,, drop=FALSE], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X, k.prior = k.prior,
                        prop.var=prop.sd.X.mat, dist=dist.X, fix.sigma=fix.sigma.X, fix.k = fix.k)
       cur.par.Xreg[i+1,] = mh$s
       
@@ -604,11 +599,11 @@ bayes.2S_seq <- function(
     cri3 = dim(ret$par.X.all[[1]])[1] >= maxit
     
     while(!(cri1 & cri2) & !cri3){
-      cat(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
-      cat(paste('Acceptance rates were:', paste(round( apply(ret$ac.X,2,mean), 2), collapse = ', '),'\n'))
-      cat('Not converged. \n')
-      # cat(paste( round(g[[1]][,ind], 2), '\n'))
-      # cat(paste( round(effs), '\n'))
+      message(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
+      message(paste('Acceptance rates were:', paste(round( apply(ret$ac.X,2,mean), 2), collapse = ', '),'\n'))
+      message('Not converged. \n')
+      # message(paste( round(g[[1]][,ind], 2), '\n'))
+      # message(paste( round(effs), '\n'))
       if(is.null(ndraws.update)) ret = bayes.2S(prev.run = ret, ndraws = ndraws)
       else ret = bayes.2S(prev.run = ret, ndraws.update = ndraws.update)
       if(vanilla) {
@@ -623,8 +618,8 @@ bayes.2S_seq <- function(
       cri2 = sum(effs > min_effss) == length(effs)
       cri3 = dim(ret$par.X.all[[1]])[1] >= maxit
     }
-    cat(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
-    if(!cri3) cat('Converged. \n') else cat('Maxit reached. Not converged. \n')
+    message(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
+    if(!cri3) message('Converged. \n') else message('Maxit reached. Not converged. \n')
     ret$convergence = !cri3
   }
   return(ret)

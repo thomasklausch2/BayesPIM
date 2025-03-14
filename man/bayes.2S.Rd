@@ -11,14 +11,14 @@ bayes.2S(
   r = NULL,
   dist.X = "weibull",
   kappa = 0.5,
-  update.kappa = F,
+  update.kappa = FALSE,
   kappa.prior = NULL,
   ndraws = 1000,
   prop.sd.X = NULL,
   chains = 3,
   thining = 1,
-  parallel = T,
-  update.till.converge = F,
+  parallel = TRUE,
+  update.till.converge = FALSE,
   maxit = Inf,
   conv.crit = "upper",
   min_effss = chains * 10,
@@ -26,18 +26,18 @@ bayes.2S(
   beta.prior.X = 1,
   sig.prior.X = 1,
   tau.w = 1,
-  fix.sigma.X = F,
+  fix.sigma.X = FALSE,
   prev.run = NULL,
-  update.burnin = T,
+  update.burnin = TRUE,
   ndraws.update = NULL,
-  prev = T,
-  vanilla = F,
+  prev = TRUE,
+  vanilla = FALSE,
   ndraws.naive = 5000,
   naive.run.prop.sd.X = prop.sd.X,
-  par.exp = F,
-  collapsed.g = T,
+  par.exp = FALSE,
+  collapsed.g = TRUE,
   k.prior = 1,
-  fix.k = F
+  fix.k = FALSE
 )
 }
 \arguments{
@@ -147,15 +147,15 @@ The argument \code{Vobs} provides the observed testing times for all individuals
 
 By convention, every vector in \code{Vobs} starts with \code{0}. However, the binary vector \code{r} of \code{length} \eqn{n} indicates whether the baseline test was conducted (\code{r[i] = 1}) or missing (\code{r[i] = 0}) for each individual \code{i} in \code{Vobs}. For further details on coding, see Section 2 of the main paper.
 
-Test sensitivity can be fixed to a value \code{kappa} by setting \code{update.kappa = F}, or it can be estimated if \code{update.kappa = T}. When estimated, a Beta prior is used, centered on the first element of \code{kappa.prior}, with a standard deviation equal to its second element. An internal optimization process finds the Beta prior hyperparameters that best match this choice. If the chosen prior is not feasible, unexpected behavior may occur. If \code{kappa.prior} is not specified (the default), an uninformative uniform(0,1) prior is used. In general, we advise against using an uninformative prior, but this default avoids favoring any specific informative prior.
+Test sensitivity can be fixed to a value \code{kappa} by setting \code{update.kappa = FALSE}, or it can be estimated if \code{update.kappa = TRUE}. When estimated, a Beta prior is used, centered on the first element of \code{kappa.prior}, with a standard deviation equal to its second element. An internal optimization process finds the Beta prior hyperparameters that best match this choice. If the chosen prior is not feasible, unexpected behavior may occur. If \code{kappa.prior} is not specified (the default), an uninformative uniform(0,1) prior is used. In general, we advise against using an uninformative prior, but this default avoids favoring any specific informative prior.
 
 The Gibbs sampler runs for \code{ndraws} iterations for each of \code{chains} total chains. The Metropolis step used for sampling the parameters of the incidence model applies a normal proposal (jumping) distribution with a standard deviation \code{prop.sd.X}, which must be selected by trial and error. An optimal acceptance rate is approximately 23\%, which can be computed per MCMC run from the model output. Alternatively, the function \link{search.prop.sd} provides a heuristic for selecting an effective proposal distribution standard deviation.
 
-If \code{parallel = T}, the Gibbs sampler runs in parallel with one chain per CPU (if possible), using the \code{foreach} package. If this package causes issues on some operating systems, set \code{parallel = F} or use the \link{bayes.2S_seq} function, which iterates over \code{1:chains} using a \code{for} loop. This sequential function may also be useful in Monte Carlo simulations that parallelize experimental replications using \code{foreach}.
+If \code{parallel = TRUE}, the Gibbs sampler runs in parallel with one chain per CPU (if possible), using the \code{foreach} package. If this package causes issues on some operating systems, set \code{parallel = FALSE} or use the \link{bayes.2S_seq} function, which iterates over \code{1:chains} using a \code{for} loop. This sequential function may also be useful in Monte Carlo simulations that parallelize experimental replications using \code{foreach}.
 
 We recommend running at least two chains in parallel, and preferably more, to facilitate standard MCMC diagnostics such as the Gelman-Rubin \eqn{R} statistic. Additionally, we suggest first running the sampler for a moderate number of iterations to assess its behavior before using the updating functionality in \code{prev.run} to extend sampling (see below).
 
-The option \code{update.till.convergence = T} allows \code{bayes.2S} to run until convergence. Convergence is achieved when \eqn{R < 1.1} for all parameters and the minimum effective sample size \code{min_effs} is reached. The sampler continues updating until convergence is attained or \code{maxit} is reached.
+The option \code{update.till.convergence = TRUE} allows \code{bayes.2S} to run until convergence. Convergence is achieved when \eqn{R < 1.1} for all parameters and the minimum effective sample size \code{min_effs} is reached. The sampler continues updating until convergence is attained or \code{maxit} is reached.
 
 The priors for the regression coefficients in the prevalence and incidence models can be controlled using \code{beta.prior}, \code{beta.prior.X}, \code{sig.prior.X}, and \code{tau.w}. Specifically:
 \itemize{
@@ -165,14 +165,14 @@ The priors for the regression coefficients in the prevalence and incidence model
 \item A zero-centered normal prior is assigned to \eqn{\beta_{wj}}, with \code{tau.w} controlling its standard deviation (default: standard normal).
 }
 
-Sometimes model fitting can be improved by fixing the \eqn{\sigma} parameter to a value, which is achieved through setting \code{fix.sigma.X = T}. Then, the value specified as \code{sig.prior.X} is regarded as the correct value for \eqn{\sigma}, akin to a point prior on this value. The functionality can also be used to obtain the exponential distribution, aking to a Markov model. For this choose \code{dist='weibull'}, \code{sig.prior.X = 1}, and \code{fix.sigma.X=T}.
+Sometimes model fitting can be improved by fixing the \eqn{\sigma} parameter to a value, which is achieved through setting \code{fix.sigma.X = TRUE}. Then, the value specified as \code{sig.prior.X} is regarded as the correct value for \eqn{\sigma}, akin to a point prior on this value. The functionality can also be used to obtain the exponential distribution, aking to a Markov model. For this choose \code{dist='weibull'}, \code{sig.prior.X = 1}, and \code{fix.sigma.X=TRUE}.
 
-The \code{prev.run} argument allows updating a previous run with additional MCMC draws. The MCMC chain resumes from the last draws, continues, and merges with the original run. If an initial model was fit using \code{mod <- bayes.2S(...)}, it can be updated using \code{mod_update <- bayes.2S(prev.run = mod)}. By default, \code{ndraws} additional iterations are added unless otherwise specified via \code{ndraws.update}. When updating, the number of discarded burn-in draws can be adjusted to half of the total draws (\code{update.burnin = T}) or remain at the initial number (\code{update.burnin = F}).
+The \code{prev.run} argument allows updating a previous run with additional MCMC draws. The MCMC chain resumes from the last draws, continues, and merges with the original run. If an initial model was fit using \code{mod <- bayes.2S(...)}, it can be updated using \code{mod_update <- bayes.2S(prev.run = mod)}. By default, \code{ndraws} additional iterations are added unless otherwise specified via \code{ndraws.update}. When updating, the number of discarded burn-in draws can be adjusted to half of the total draws (\code{update.burnin = TRUE}) or remain at the initial number (\code{update.burnin = FALSE}).
 
-The Gibbs sampler requires starting values, which are obtained from an initial Bayesian interval-censored survival model using the specified \code{dist} distribution. The jumping distribution variance and the number of MCMC draws for this initialization are controlled via \code{ndraws.naive} and \code{naive.run.prop.sd.X}. The default values typically suffice but may need adjustment if initialization fails (e.g., increasing \code{ndraws.naive} or tuning \code{naive.run.prop.sd.X}).
+The Gibbs sampler requires starting values, which are obtained from an initial Bayesian interval-censored survival model using the specified \code{dist} distribution. The jumping distribution variance and the number of MCMC draws for this initialization are controlled via \code{ndraws.naive} and \code{naive.run.prop.sd.X}. The default values typically suffice but may need adjustment if initialization fails (e.g., increasing \code{ndraws.naive} or tuning \code{naive.run.prop.sd.X}). If starting values are found but still lead to an infinite posterior at initialization, the error "Bad starting values" is returned. Then it usually sufficces to re-run \code{bayes.2S} with an increased \code{ndraws.naive} value.
 }
 \examples{
-\dontrun{
+\donttest{
 library(BayesPIM)
 
 # Generate data according to the Klausch et al. (2024) PIM

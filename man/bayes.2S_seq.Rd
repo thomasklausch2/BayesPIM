@@ -11,14 +11,14 @@ bayes.2S_seq(
   r = NULL,
   dist.X = "weibull",
   kappa = 0.5,
-  update.kappa = F,
+  update.kappa = FALSE,
   kappa.prior = NULL,
   ndraws = 1000,
   prop.sd.X = NULL,
   chains = 3,
   thining = 1,
-  parallel = T,
-  update.till.converge = F,
+  parallel = TRUE,
+  update.till.converge = FALSE,
   maxit = Inf,
   conv.crit = "upper",
   min_effss = chains * 10,
@@ -26,18 +26,18 @@ bayes.2S_seq(
   beta.prior.X = 1,
   sig.prior.X = 1,
   tau.w = 1,
-  fix.sigma.X = F,
+  fix.sigma.X = FALSE,
   prev.run = NULL,
-  update.burnin = T,
+  update.burnin = TRUE,
   ndraws.update = NULL,
-  prev = T,
-  vanilla = F,
+  prev = TRUE,
+  vanilla = FALSE,
   ndraws.naive = 5000,
   naive.run.prop.sd.X = prop.sd.X,
-  par.exp = F,
-  collapsed.g = T,
+  par.exp = FALSE,
+  collapsed.g = TRUE,
   k.prior = 1,
-  fix.k = F
+  fix.k = FALSE
 )
 }
 \arguments{
@@ -129,7 +129,7 @@ Estimates the Pattern Mixture model of Klausch et al. (2025) using a Bayesian Gi
 This function is dentical to \link{bayes.2S} with the only difference being that the \code{chains} MCMC chains are run in sequence using a \code{for} loop instead of parallel processing. This can be useful if operating systems do not support \code{foreach} or for simulation studies that parallize replication of experiments using \code{foreach} and/or need a worker that does not apply \code{foreach} internally.
 }
 \examples{
-\dontrun{
+\donttest{
 library(BayesPIM)
 
 # Generate data according to the Klausch et al. (2025) PIM

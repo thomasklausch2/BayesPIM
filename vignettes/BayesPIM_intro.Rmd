@@ -196,7 +196,9 @@ Subsequently, we can plot the results as follows.
 
 ```{r , fig.width=8, fig.height=4, eval = FALSE}
 # Comparison plot non-prevalent stratum CIF vs. mixture CIF (marginal)
+oldpar <- par(no.readonly = TRUE)
 par(mfrow = c(1,2))
+
 plot(cif_nonprev$med.cdf, cif_nonprev$perc, ty = 'l', ylim=c(0,1), 
      xlim=c(0,300), xlab = 'Time', ylab ='Cum. prob.', main = 'Non-prevalence CIF')
 lines(cif_nonprev$med.cdf.ci[1,], cif_nonprev$perc, lty=2, col=2)
@@ -252,6 +254,8 @@ plot(cif_mix_m1$med.cdf, cif_mix_m1$perc, ty = 'l', ylim=c(0,1),
      xlim=c(0,300), xlab = 'Time', ylab ='Cum. prob.', main = 'Conditional mixture CIF')
 lines(cif_mix_0$med.cdf, cif_mix_m1$perc, col=2)
 lines(cif_mix_p1$med.cdf, cif_mix_m1$perc, col=3)
+
+par(oldpar)
 ```
 
 ```{r, echo=FALSE, out.width='50%'}

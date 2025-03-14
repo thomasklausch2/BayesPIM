@@ -55,7 +55,7 @@ is considered acceptable, and the process continues until \code{succ.min} consec
 successes (doubles) are achieved.
 }
 \examples{
-\dontrun{
+\donttest{
 # Generate data according to Klausch et al. (2025) PIM
 set.seed(2025)
 dat = gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,

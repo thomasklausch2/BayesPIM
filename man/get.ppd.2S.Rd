@@ -105,7 +105,7 @@ returns corresponding \emph{percentiles} (cumulative probabilities).
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Generate data according to the Klausch et al. (2024) PIM
 set.seed(2025)
 dat <- gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
@@ -130,7 +130,9 @@ cif_mix     <- get.ppd.2S(mod, pst.samples = 1e3, type = "xstar",
                           ppd.type = "quantiles", perc = seq(0, 1, 0.01))
 
 # Plot: Non-prevalent stratum CIF vs. mixture CIF (marginal)
+oldpar <- par(no.readonly = TRUE)
 par(mfrow = c(1,2))
+
 plot(cif_nonprev$med.cdf, cif_nonprev$perc, type = "l", xlim = c(0,300), ylim = c(0,1),
      xlab = "Time", ylab = "Cumulative Incidence")
 lines(cif_nonprev$med.cdf.ci[1,], cif_nonprev$perc, lty = 2)
@@ -176,6 +178,8 @@ plot(cif_mix_m1$med.cdf, cif_mix_m1$perc, type = "l", xlim = c(0,300), ylim = c(
      xlab = "Time", ylab = "Cumulative Incidence", col=1)
 lines(cif_mix_0$med.cdf,  cif_mix_m1$perc, col=2)
 lines(cif_mix_p1$med.cdf, cif_mix_m1$perc, col=3)
+
+par(oldpar)
 }
 
 }

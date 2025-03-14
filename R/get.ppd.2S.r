@@ -80,7 +80,7 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate data according to the Klausch et al. (2024) PIM
 #' set.seed(2025)
 #' dat <- gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
@@ -105,7 +105,9 @@
 #'                           ppd.type = "quantiles", perc = seq(0, 1, 0.01))
 #'
 #' # Plot: Non-prevalent stratum CIF vs. mixture CIF (marginal)
+#' oldpar <- par(no.readonly = TRUE)
 #' par(mfrow = c(1,2))
+#' 
 #' plot(cif_nonprev$med.cdf, cif_nonprev$perc, type = "l", xlim = c(0,300), ylim = c(0,1),
 #'      xlab = "Time", ylab = "Cumulative Incidence")
 #' lines(cif_nonprev$med.cdf.ci[1,], cif_nonprev$perc, lty = 2)
@@ -151,6 +153,8 @@
 #'      xlab = "Time", ylab = "Cumulative Incidence", col=1)
 #' lines(cif_mix_0$med.cdf,  cif_mix_m1$perc, col=2)
 #' lines(cif_mix_p1$med.cdf, cif_mix_m1$perc, col=3)
+#' 
+#' par(oldpar)
 #' }
 #'
 #' @export
@@ -181,7 +185,7 @@ get.ppd.2S = function (mod, fix_Z.X = NULL, fix_Z.W = NULL, pst.samples = 1e3, p
   }
   
   s = sample(1:(length(par.list.X) * nrow(as.matrix(par.list.X[1]))), 
-             pst.samples, replace = F)
+             pst.samples, replace = FALSE)
   if (vanilla)  ppd = sample.ppd.vanilla(par.list = par.list.X, Z.X = Z.X, 
                              dist.X = dist.X, s = s)
   if (!vanilla) ppd = sample.ppd.xstar(par.list = par.list.X, Z.X = Z.X, 
@@ -203,7 +207,7 @@ get.ppd.2S = function (mod, fix_Z.X = NULL, fix_Z.W = NULL, pst.samples = 1e3, p
     ret$quant = quant
   }
   if (ppd.type == "quantiles") {
-    q = apply(ppd, 2, quantile, perc, na.rm = T)
+    q = apply(ppd, 2, quantile, perc, na.rm = TRUE)
     ret$med.cdf = apply(q, 1, median)
     ret$med.cdf.ci = apply(q, 1, quantile, c(0.025, 0.975))
     ret$perc = perc

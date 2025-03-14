@@ -43,7 +43,7 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate data according to Klausch et al. (2025) PIM
 #' set.seed(2025)
 #' dat = gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
@@ -67,10 +67,10 @@
 #'
 #' @export
 search.prop.sd = function(m, ndraws = 1000, succ.min = 3, acc.bounds.X =c(0.2,0.25)){
-  found.X = found.S = F
+  found.X = found.S = FALSE
   it = 1; succ = 0;
   while(succ!=succ.min){
-    cat(paste('Iteration',it,'\n'))
+    message(paste('Iteration',it,'\n'))
     if(it == 1) { ac.X.cur = mean(m$ac.X)
     prop.sd.X = m$prop.sd.X}
     if(it >1) {
@@ -81,10 +81,10 @@ search.prop.sd = function(m, ndraws = 1000, succ.min = 3, acc.bounds.X =c(0.2,0.
     }
     acc.bounds.mean = (acc.bounds.X[2]-acc.bounds.X[1])/2 + acc.bounds.X[1]
     ac.X = mean(m$ac.X)
-    cat( paste('Acceptance rate was:', round(ac.X.cur, 3),'\n' ))
+    message( paste('Acceptance rate was:', round(ac.X.cur, 3),'\n' ))
     ac.X = ac.X.cur
     if((ac.X > acc.bounds.X[1] & ac.X < acc.bounds.X[2]) ){
-      found.X = T} else{
+      found.X = TRUE} else{
       if(ac.X < acc.bounds.X[1]) {
         dif =  1-(acc.bounds.X[1] - ac.X)/acc.bounds.X[1]
         prop.sd.X=prop.sd.X * dif
@@ -93,18 +93,18 @@ search.prop.sd = function(m, ndraws = 1000, succ.min = 3, acc.bounds.X =c(0.2,0.
         dif =  1+(ac.X - acc.bounds.X[2])/acc.bounds.X[2]
         prop.sd.X=prop.sd.X * dif
       }
-      found.X = F
-      cat(paste('prop.sd.X is set to', round(prop.sd.X,3),'\n'))
+      found.X = FALSE
+      message(paste('prop.sd.X is set to', round(prop.sd.X,3),'\n'))
     }
     it=it+1
     if(found.X ){
       ndraws = ndraws*2
       succ = succ +1
-      found.X = F
-      if(succ!=succ.min) cat(paste('Success. Doubling number of MCMC draws:',ndraws,'\n'))
+      found.X = FALSE
+      if(succ!=succ.min) message(paste('Success. Doubling number of MCMC draws:',ndraws,'\n'))
       }
   }
-  cat('Finished calibrating proposal variance. \n')
+  message('Finished calibrating proposal variance. \n')
   ret= list()
   ret$prop.sd.X = prop.sd.X
   ret$ac.X      = ac.X

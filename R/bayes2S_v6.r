@@ -24,15 +24,15 @@
 #' 
 #' By convention, every vector in \code{Vobs} starts with \code{0}. However, the binary vector \code{r} of \code{length} \eqn{n} indicates whether the baseline test was conducted (\code{r[i] = 1}) or missing (\code{r[i] = 0}) for each individual \code{i} in \code{Vobs}. For further details on coding, see Section 2 of the main paper.
 #' 
-#' Test sensitivity can be fixed to a value \code{kappa} by setting \code{update.kappa = F}, or it can be estimated if \code{update.kappa = T}. When estimated, a Beta prior is used, centered on the first element of \code{kappa.prior}, with a standard deviation equal to its second element. An internal optimization process finds the Beta prior hyperparameters that best match this choice. If the chosen prior is not feasible, unexpected behavior may occur. If \code{kappa.prior} is not specified (the default), an uninformative uniform(0,1) prior is used. In general, we advise against using an uninformative prior, but this default avoids favoring any specific informative prior.
+#' Test sensitivity can be fixed to a value \code{kappa} by setting \code{update.kappa = FALSE}, or it can be estimated if \code{update.kappa = TRUE}. When estimated, a Beta prior is used, centered on the first element of \code{kappa.prior}, with a standard deviation equal to its second element. An internal optimization process finds the Beta prior hyperparameters that best match this choice. If the chosen prior is not feasible, unexpected behavior may occur. If \code{kappa.prior} is not specified (the default), an uninformative uniform(0,1) prior is used. In general, we advise against using an uninformative prior, but this default avoids favoring any specific informative prior.
 #'
 #' The Gibbs sampler runs for \code{ndraws} iterations for each of \code{chains} total chains. The Metropolis step used for sampling the parameters of the incidence model applies a normal proposal (jumping) distribution with a standard deviation \code{prop.sd.X}, which must be selected by trial and error. An optimal acceptance rate is approximately 23%, which can be computed per MCMC run from the model output. Alternatively, the function \link{search.prop.sd} provides a heuristic for selecting an effective proposal distribution standard deviation. 
 #' 
-#' If \code{parallel = T}, the Gibbs sampler runs in parallel with one chain per CPU (if possible), using the \code{foreach} package. If this package causes issues on some operating systems, set \code{parallel = F} or use the \link{bayes.2S_seq} function, which iterates over \code{1:chains} using a \code{for} loop. This sequential function may also be useful in Monte Carlo simulations that parallelize experimental replications using \code{foreach}.
+#' If \code{parallel = TRUE}, the Gibbs sampler runs in parallel with one chain per CPU (if possible), using the \code{foreach} package. If this package causes issues on some operating systems, set \code{parallel = FALSE} or use the \link{bayes.2S_seq} function, which iterates over \code{1:chains} using a \code{for} loop. This sequential function may also be useful in Monte Carlo simulations that parallelize experimental replications using \code{foreach}.
 #' 
 #' We recommend running at least two chains in parallel, and preferably more, to facilitate standard MCMC diagnostics such as the Gelman-Rubin \eqn{R} statistic. Additionally, we suggest first running the sampler for a moderate number of iterations to assess its behavior before using the updating functionality in \code{prev.run} to extend sampling (see below).
 #' 
-#' The option \code{update.till.convergence = T} allows \code{bayes.2S} to run until convergence. Convergence is achieved when \eqn{R < 1.1} for all parameters and the minimum effective sample size \code{min_effs} is reached. The sampler continues updating until convergence is attained or \code{maxit} is reached.
+#' The option \code{update.till.convergence = TRUE} allows \code{bayes.2S} to run until convergence. Convergence is achieved when \eqn{R < 1.1} for all parameters and the minimum effective sample size \code{min_effs} is reached. The sampler continues updating until convergence is attained or \code{maxit} is reached.
 #' 
 #' The priors for the regression coefficients in the prevalence and incidence models can be controlled using \code{beta.prior}, \code{beta.prior.X}, \code{sig.prior.X}, and \code{tau.w}. Specifically:
 #' \itemize{
@@ -42,11 +42,11 @@
 #'   \item A zero-centered normal prior is assigned to \eqn{\beta_{wj}}, with \code{tau.w} controlling its standard deviation (default: standard normal).
 #' }
 #' 
-#' Sometimes model fitting can be improved by fixing the \eqn{\sigma} parameter to a value, which is achieved through setting \code{fix.sigma.X = T}. Then, the value specified as \code{sig.prior.X} is regarded as the correct value for \eqn{\sigma}, akin to a point prior on this value. The functionality can also be used to obtain the exponential distribution, aking to a Markov model. For this choose \code{dist='weibull'}, \code{sig.prior.X = 1}, and \code{fix.sigma.X=T}.
+#' Sometimes model fitting can be improved by fixing the \eqn{\sigma} parameter to a value, which is achieved through setting \code{fix.sigma.X = TRUE}. Then, the value specified as \code{sig.prior.X} is regarded as the correct value for \eqn{\sigma}, akin to a point prior on this value. The functionality can also be used to obtain the exponential distribution, aking to a Markov model. For this choose \code{dist='weibull'}, \code{sig.prior.X = 1}, and \code{fix.sigma.X=TRUE}.
 #' 
-#' The \code{prev.run} argument allows updating a previous run with additional MCMC draws. The MCMC chain resumes from the last draws, continues, and merges with the original run. If an initial model was fit using \code{mod <- bayes.2S(...)}, it can be updated using \code{mod_update <- bayes.2S(prev.run = mod)}. By default, \code{ndraws} additional iterations are added unless otherwise specified via \code{ndraws.update}. When updating, the number of discarded burn-in draws can be adjusted to half of the total draws (\code{update.burnin = T}) or remain at the initial number (\code{update.burnin = F}).
+#' The \code{prev.run} argument allows updating a previous run with additional MCMC draws. The MCMC chain resumes from the last draws, continues, and merges with the original run. If an initial model was fit using \code{mod <- bayes.2S(...)}, it can be updated using \code{mod_update <- bayes.2S(prev.run = mod)}. By default, \code{ndraws} additional iterations are added unless otherwise specified via \code{ndraws.update}. When updating, the number of discarded burn-in draws can be adjusted to half of the total draws (\code{update.burnin = TRUE}) or remain at the initial number (\code{update.burnin = FALSE}).
 #'
-#' The Gibbs sampler requires starting values, which are obtained from an initial Bayesian interval-censored survival model using the specified \code{dist} distribution. The jumping distribution variance and the number of MCMC draws for this initialization are controlled via \code{ndraws.naive} and \code{naive.run.prop.sd.X}. The default values typically suffice but may need adjustment if initialization fails (e.g., increasing \code{ndraws.naive} or tuning \code{naive.run.prop.sd.X}).
+#' The Gibbs sampler requires starting values, which are obtained from an initial Bayesian interval-censored survival model using the specified \code{dist} distribution. The jumping distribution variance and the number of MCMC draws for this initialization are controlled via \code{ndraws.naive} and \code{naive.run.prop.sd.X}. The default values typically suffice but may need adjustment if initialization fails (e.g., increasing \code{ndraws.naive} or tuning \code{naive.run.prop.sd.X}). If starting values are found but still lead to an infinite posterior at initialization, the error "Bad starting values" is returned. Then it usually sufficces to re-run `bayes.2S` with an increased \code{ndraws.naive} value.
 #' 
 #'    
 #' @param Vobs A list of length \eqn{n} of numeric vectors representing screening times. The first element of each vector should always be \code{0} and the last element \code{Inf} in the case of right censoring.
@@ -110,7 +110,7 @@
 #' J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, doi: 10.2307/2669940.
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(BayesPIM)
 #' 
 #' # Generate data according to the Klausch et al. (2024) PIM
@@ -178,7 +178,7 @@ bayes.2S <- function(
   # Group 2: Basic model settings
   dist.X = 'weibull', 
   kappa = 0.5, 
-  update.kappa = F, 
+  update.kappa = FALSE, 
   kappa.prior = NULL, 
   
   # Group 3: Main MCMC sampler settings
@@ -186,8 +186,8 @@ bayes.2S <- function(
   prop.sd.X = NULL, 
   chains = 3, 
   thining = 1, 
-  parallel = T, 
-  update.till.converge = F, 
+  parallel = TRUE, 
+  update.till.converge = FALSE, 
   maxit = Inf, 
   conv.crit = 'upper', 
   min_effss = chains * 10, 
@@ -197,24 +197,24 @@ bayes.2S <- function(
   beta.prior.X = 1, 
   sig.prior.X = 1, 
   tau.w = 1, 
-  fix.sigma.X = F, 
+  fix.sigma.X = FALSE, 
   
   # Group 5: Updating previous run settings
   prev.run = NULL, 
-  update.burnin = T, 
+  update.burnin = TRUE, 
   ndraws.update = NULL, 
   
   # Group 6: Additional model flags
-  prev = T, 
-  vanilla = F, 
+  prev = TRUE, 
+  vanilla = FALSE, 
   ndraws.naive = 5000, 
   naive.run.prop.sd.X = prop.sd.X, 
-  par.exp = F, 
-  collapsed.g = T, 
+  par.exp = FALSE, 
+  collapsed.g = TRUE, 
   
   # Group 7: Experimentals
   k.prior = 1, 
-  fix.k = F
+  fix.k = FALSE
 ) {
   
   t0 = Sys.time()
@@ -253,7 +253,7 @@ bayes.2S <- function(
     kappa.prior = prev.run$kappa.prior
     fix.k = prev.run$fix.k
     prev.runtime = prev.run$runtime
-    cat('Updating previous MCMC run. \n')
+    message('Updating previous MCMC run. \n')
   }
   
   if(update.kappa & !is.null(kappa.prior)){
@@ -314,40 +314,37 @@ bayes.2S <- function(
   sig_inv = solve(t(Z1.W) %*% Z1.W + diag(rep(tau.w^-1,ncol(Z1.W)) ))
   sig_inv_Xt = sig_inv %*% t(Z1.W)
   
-  # Get random seeds
-  s = sample(1:10^5,chains, replace=F)
-  
   if(!vanilla & is.null(prev.run)){
     adapted = 2
-    cat('Searching starting values by one naive run \n')
-    done = F
+    message('Searching starting values by one naive run \n')
+    done = FALSE
     while(!done){
-      mod.simple = bayes.2S(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = T,
+      mod.simple = bayes.2S(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = TRUE,
                             ndraws=ndraws.naive, chains=3, thining=1, prop.sd.X=naive.run.prop.sd.X,
                             beta.prior.X = beta.prior.X, sig.prior.X = sig.prior.X, fix.sigma.X = fix.sigma.X,
-                            prev.run = NULL, dist.X = dist.X, update.burnin = T,
-                            beta.prior = 't', vanilla = T)
+                            prev.run = NULL, dist.X = dist.X, update.burnin = TRUE,
+                            beta.prior = 't', vanilla = TRUE)
       pars.simple = as.matrix(mod.simple$par.X.bi)
-      ini = pars.simple[sample(1: nrow(pars.simple), chains, replace=F),]
+      ini = pars.simple[sample(1: nrow(pars.simple), chains, replace=FALSE),]
       ac.rates = apply(mod.simple$ac.X,2, mean)
       if( sum(ac.rates > .85) >0) {
-        cat('Naive run acceptance rates >0.85. Increasing naive.run.proposal.sd.X.\n')
+        message('Naive run acceptance rates >0.85. Increasing naive.run.proposal.sd.X.\n')
         naive.run.prop.sd.X = naive.run.prop.sd.X*adapted
         adapted = adapted + 1
       }
       if( sum(ac.rates < .15) >0) {
-        cat('Naive run acceptance rates <0.15. Decreasing naive.run.proposal.sd.X.\n')
+        message('Naive run acceptance rates <0.15. Decreasing naive.run.proposal.sd.X.\n')
         naive.run.prop.sd.X = naive.run.prop.sd.X/adapted
         adapted = adapted + 1
       }
       if(adapted>20) stop('Cannot find naive.run.prop.sd.X that produces good acceptance rate.')
-      if(sum(ac.rates > .85) == 0 & sum(ac.rates < .15) == 0) done = T
+      if(sum(ac.rates > .85) == 0 & sum(ac.rates < .15) == 0) done = TRUE
     }
-    cat('Now doing main run. \n')
+    message('Now doing main run. \n')
   }
   
   ## Start run
-  cat(paste("Starting Gibbs sampler with", chains, "chains and", ndraws, "iterations.\n"))
+  message(paste("Starting Gibbs sampler with", chains, "chains and", ndraws, "iterations.\n"))
   `%myinfix%` <- ifelse(parallel, `%dopar%`, `%do%`)
   if(parallel){
     cl    = makePSOCKcluster(chains)
@@ -369,8 +366,6 @@ bayes.2S <- function(
   run = foreach(j = 1:chains,
                 .packages = c('mvtnorm','BayesPIM', 'actuar','ggamma'),
                 .export = exportfunctions)   %myinfix% {
-                  
-                  set.seed(s[j])
                   
                   # Begin Gibbs
                   ac.X = ac.S = 1
@@ -436,7 +431,7 @@ bayes.2S <- function(
                   }
                   
                   i=1
-                  log.pst.X  = pst.aft(par=cur.par.Xreg[i,, drop=F], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X,
+                  log.pst.X  = pst.aft(par=cur.par.Xreg[i,, drop=FALSE], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X,
                                        k.prior = k.prior,
                                        dist=dist.X, beta.prior = beta.prior)
                   if(is.infinite(log.pst.X) ) stop('Bad starting values')
@@ -447,14 +442,14 @@ bayes.2S <- function(
                   
                   for(i in 1:ndraws){
                     # if (i %% 100 == 0) {
-                    #   cat("Completed", i, "of", n, "iterations\n")
+                    #   message("Completed", i, "of", n, "iterations\n")
                     # }
                     #Update  X parameters
                     # if(i == burnin) {
                     #   S = cov(cur.par.Xreg[(burnin-101):(burnin-1),])
                     #   prop.sd.X.mat = 2.4^2/(nrow(Z1.X)+p1.X+1) * S #+ 0.0001 * diag(1, p1.X+1)
                     # }
-                    mh  = mhstep.aft(x=cur.par.Xreg[i,, drop=F], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X, k.prior = k.prior,
+                    mh  = mhstep.aft(x=cur.par.Xreg[i,, drop=FALSE], t=X, Z=Z1.X, tau= beta.prior.X, sig.prior=sig.prior.X, k.prior = k.prior,
                                      prop.var=prop.sd.X.mat, dist=dist.X, fix.sigma=fix.sigma.X, fix.k = fix.k)
                     cur.par.Xreg[i+1,] = mh$s
                     
@@ -670,11 +665,11 @@ bayes.2S <- function(
     cri3 = dim(ret$par.X.all[[1]])[1] >= maxit
     
     while(!(cri1 & cri2) & !cri3){
-      cat(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
-      cat(paste('Acceptance rates were:', paste(round( apply(ret$ac.X,2,mean), 2), collapse = ', '),'\n'))
-      cat('Not converged. \n')
-      # cat(paste( round(g[[1]][,ind], 2), '\n'))
-      # cat(paste( round(effs), '\n'))
+      message(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
+      message(paste('Acceptance rates were:', paste(round( apply(ret$ac.X,2,mean), 2), collapse = ', '),'\n'))
+      message('Not converged. \n')
+      # message(paste( round(g[[1]][,ind], 2), '\n'))
+      # message(paste( round(effs), '\n'))
       if(is.null(ndraws.update)) ret = bayes.2S(prev.run = ret, ndraws = ndraws)
       else ret = bayes.2S(prev.run = ret, ndraws.update = ndraws.update)
       if(vanilla) {
@@ -689,8 +684,8 @@ bayes.2S <- function(
       cri2 = sum(effs > min_effss) == length(effs)
       cri3 = dim(ret$par.X.all[[1]])[1] >= maxit
     }
-    cat(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
-    if(!cri3) cat('Converged. \n') else cat('Maxit reached. Not converged. \n')
+    message(paste('Completed', dim(ret$par.X.all[[1]])[1], 'draws. \n'))
+    if(!cri3) message('Converged. \n') else message('Maxit reached. Not converged. \n')
     ret$convergence = !cri3
   }
   return(ret)

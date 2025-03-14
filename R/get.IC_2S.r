@@ -23,7 +23,7 @@
 #' Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016. https://doi.org/10.1007/s11222-013-9416-2
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Generate data according to the Klausch et al. (2024) PIM
 #' set.seed(2025)
 #' dat = gen.dat(kappa = 0.7, n= 1e3, theta = 0.2,
@@ -43,7 +43,7 @@
 #'                 ndraws= 1e4,
 #'                 chains = 4,
 #'                 prop.sd.X = 0.008,
-#'                 parallel = T,
+#'                 parallel = TRUE,
 #'                 dist.X = 'weibull'
 #' )
 #' 
@@ -66,7 +66,7 @@ get.IC_2S = function(mod, samples = nrow(mod$par.X.bi[[1]]), cores = NULL){
   
   ncol.X= ncol(m.X)
   m.X[,(p1.X + 1)] = log(m.X[,(p1.X + 1)])
-  m.s = m.X[sample(1:nrow(m.X), samples, replace=F),]
+  m.s = m.X[sample(1:nrow(m.X), samples, replace=FALSE),]
   
   cl    = makePSOCKcluster(cores)
   clusterSetRNGStream(cl)
@@ -81,7 +81,7 @@ get.IC_2S = function(mod, samples = nrow(mod$par.X.bi[[1]]), cores = NULL){
                 
   ) %dopar% {
     m.s.cores = m.s[s[j]:(s[j+1]-1),]
-    out = apply(m.s.cores,1, function(x) Lobs_2S(est=x, mod=mod, log.scale = F, sumup=F) ) 
+    out = apply(m.s.cores,1, function(x) Lobs_2S(est=x, mod=mod, log.scale = FALSE, sumup=FALSE) ) 
   }
   stopCluster(cl)
   
@@ -91,7 +91,7 @@ get.IC_2S = function(mod, samples = nrow(mod$par.X.bi[[1]]), cores = NULL){
   q1   = sum (apply( log(run), 1, mean))
   q2   = sum( apply( log(run), 1, var) )
   q3   = mean( apply( log(run),2, sum) )
-  q4   = sum(Lobs_2S(pst.mean, mod=mod, log.scale = T, sumup=F))
+  q4   = sum(Lobs_2S(pst.mean, mod=mod, log.scale = TRUE, sumup=FALSE))
   DIC  = -2* ( q4 - 2*(q4-q3) )
   WAIC1    = -2*(-lppd + 2*q1)
   WAIC2    = -2*(lppd - q2)
