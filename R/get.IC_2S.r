@@ -20,7 +20,7 @@
 #' @return A \code{matrix} containing WAIC-1, WAIC-2, and DIC values for the model.
 #' 
 #' @references 
-#' Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016. https://doi.org/10.1007/s11222-013-9416-2
+#' Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016.
 #' 
 #' @examples
 #' \donttest{
@@ -41,14 +41,14 @@
 #'                 kappa = 0.7,
 #'                 update.kappa = FALSE,
 #'                 ndraws= 1e4,
-#'                 chains = 4,
+#'                 chains = 2,
 #'                 prop.sd.X = 0.008,
 #'                 parallel = TRUE,
 #'                 dist.X = 'weibull'
 #' )
 #' 
 #' # Get information criteria
-#' get.IC_2S(mod, samples = 1e3)
+#' get.IC_2S(mod, samples = 1e3, cores = 2)
 #' }
 #' 
 #' @export

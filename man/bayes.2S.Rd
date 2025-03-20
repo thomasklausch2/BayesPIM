@@ -32,7 +32,7 @@ bayes.2S(
   ndraws.update = NULL,
   prev = TRUE,
   vanilla = FALSE,
-  ndraws.naive = 5000,
+  ndraws.naive = 10000,
   naive.run.prop.sd.X = prop.sd.X,
   par.exp = FALSE,
   collapsed.g = TRUE,
@@ -192,7 +192,7 @@ mod <- bayes.2S(Vobs = dat$Vobs,
                 kappa = 0.7,
                 update.kappa = FALSE,
                 ndraws = 1e4,
-                chains = 4,
+                chains = 2,
                 prop.sd.X = 0.008,
                 parallel = TRUE,
                 dist.X = "weibull")
@@ -219,7 +219,7 @@ mod2 <- bayes.2S(Vobs = dat$Vobs,
                  update.kappa = TRUE,
                  kappa.prior = c(0.7, 0.1), # Beta prior, mean = 0.7, s.d. = 0.1
                  ndraws = 1e4,
-                 chains = 4,
+                 chains = 2,
                  prop.sd.X = 0.008,
                  parallel = TRUE,
                  dist.X = "weibull")
@@ -231,7 +231,7 @@ plot( trim.mcmc( mod2$par.X.all, thining = 10) ) # kappa returned as part of the
 
 }
 \references{
-T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", doi:10.48550/arXiv.2412.16065.
+T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", \url{doi:10.48550/arXiv.2412.16065}.
 
-J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, doi: 10.2307/2669940.
+J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, \url{doi:10.2307/2669940}.
 }

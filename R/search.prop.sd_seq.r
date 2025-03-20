@@ -56,7 +56,7 @@
 #' # An initial model fit with a moderate number of ndraws (e.g., 1e3)
 #' mod = bayes.2S(
 #'   Vobs = dat$Vobs, Z.X = dat$Z, Z.W = dat$Z, r = dat$r,
-#'   kappa = 0.7, update.kappa = FALSE, ndraws = 1e3, chains = 4,
+#'   kappa = 0.7, update.kappa = FALSE, ndraws = 1e3, chains = 2,
 #'   prop.sd.X = 0.005, parallel = TRUE, dist.X = "weibull"
 #' )
 #'

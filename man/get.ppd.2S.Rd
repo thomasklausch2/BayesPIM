@@ -118,7 +118,7 @@ dat <- gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
 # Fit a bayes.2S model (example with moderate ndraws = 2e4)
 mod <- bayes.2S(Vobs = dat$Vobs, Z.X = dat$Z, Z.W = dat$Z, r = dat$r,
                 kappa = 0.7, update.kappa = FALSE, ndraws = 1e4,
-                chains = 4, prop.sd.X = 0.008, parallel = TRUE,
+                chains = 2, prop.sd.X = 0.008, parallel = TRUE,
                 dist.X = "weibull")
 
 ###################
