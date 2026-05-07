@@ -6,7 +6,7 @@
 
 BayesPIM is a versatile modeling environment for screening and
 surveillance data, as described in detail in the main reference Klausch
-et al. (2024). It is a so-called prevalence-incidence mixture (PIM)
+et al. (2024, 2026). It is a so-called prevalence-incidence mixture (PIM)
 model with a Bayesian Gibbs sampler as the estimation backend. For
 details on usage see the `vignette("BayesPIM_intro")`.
 
@@ -63,3 +63,8 @@ gelman.diag(mod$par.X.bi) # Gelman convergence diagnostics
 T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). “A Bayesian
 prevalence-incidence mixture model for screening outcomes with
 misclassification.” arXiv:2412.16065. <https://arxiv.org/abs/2412.16065>
+
+
+T. Klausch, B. I. Lissenberg-Witte, and V. M. H. Coupé (2026). "A Bayesian 
+prevalence-incidence mixture model for screening outcomes with misclassification."
+Statistics in Medicine, 45(8-9), e70433. <doi:10.1002/sim.70433>
