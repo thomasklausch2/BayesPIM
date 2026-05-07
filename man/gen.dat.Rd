@@ -30,7 +30,7 @@ gen.dat(
 
 \item{n}{Integer. Sample size.}
 
-\item{p}{Integer. Number of continuous baseline covariates to simulate.}
+\item{p}{Integer. Number of continuous multivariate normal baseline covariates to simulate.}
 
 \item{p.discrete}{Integer. If \code{1}, include an additional discrete covariate \eqn{Z_{\mathrm{discrete}}} from \eqn{\mathrm{Bernoulli}(0.5)}; otherwise, none.}
 
@@ -94,7 +94,7 @@ The data-generating process includes:
 
 \enumerate{
 \item \strong{Covariates \eqn{Z}:}
-Continuous covariates are simulated using a correlation structure specified by \code{r} and a common standard deviation \code{s}.
+Continuous multivariate normal distributed covariates are simulated using a correlation structure specified by \code{r} and a common standard deviation \code{s}.
 If \code{p.discrete = 1}, a single discrete covariate is added, drawn from \eqn{\mathrm{Bernoulli}(0.5)}.
 
 \item \strong{Event Times \eqn{X}:}

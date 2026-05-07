@@ -10,7 +10,7 @@
 #'
 #' \enumerate{
 #'   \item \strong{Covariates \eqn{Z}:}
-#'         Continuous covariates are simulated using a correlation structure specified by \code{r} and a common standard deviation \code{s}. 
+#'         Continuous multivariate normal distributed covariates are simulated using a correlation structure specified by \code{r} and a common standard deviation \code{s}. 
 #'         If \code{p.discrete = 1}, a single discrete covariate is added, drawn from \eqn{\mathrm{Bernoulli}(0.5)}.
 #'
 #'   \item \strong{Event Times \eqn{X}:}
@@ -50,7 +50,7 @@
 #'
 #' @param kappa Numeric. Test sensitivity parameter \eqn{\kappa} used when generating misclassification. A value of 1 implies perfect sensitivity.
 #' @param n Integer. Sample size.
-#' @param p Integer. Number of continuous baseline covariates to simulate.
+#' @param p Integer. Number of continuous multivariate normal baseline covariates to simulate.
 #' @param p.discrete Integer. If \code{1}, include an additional discrete covariate \eqn{Z_{\mathrm{discrete}}} from \eqn{\mathrm{Bernoulli}(0.5)}; otherwise, none.
 #' @param r Numeric. Correlation coefficient(s) used to build the covariance matrix of continuous covariates. If \code{p > 1}, 
 #'          off-diagonal entries of the correlation matrix are set to \code{r}.

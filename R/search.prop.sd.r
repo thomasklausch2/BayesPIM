@@ -43,7 +43,7 @@
 #' }
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Generate data according to Klausch et al. (2025) PIM
 #' set.seed(2025)
 #' dat = gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
@@ -74,9 +74,9 @@ search.prop.sd = function(m, ndraws = 1000, succ.min = 3, acc.bounds.X =c(0.2,0.
     if(it == 1) { ac.X.cur = mean(m$ac.X)
     prop.sd.X = m$prop.sd.X}
     if(it >1) {
-      sink(file = "NUL", type = "output")
+      invisible(capture.output({
       m = bayes.2S( prev.run = m, ndraws.update = ndraws, prop.sd.X = prop.sd.X)
-      sink(type = "output")
+      }))
       ac.X.cur = mean(m$ac.X.cur)
     }
     acc.bounds.mean = (acc.bounds.X[2]-acc.bounds.X[1])/2 + acc.bounds.X[1]

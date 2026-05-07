@@ -43,7 +43,7 @@
 #' }
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Generate data according to Klausch et al. (2025) PIM
 #' set.seed(2025)
 #' dat = gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
@@ -54,10 +54,10 @@
 #'               prob.r  = 1)
 #'
 #' # An initial model fit with a moderate number of ndraws (e.g., 1e3)
-#' mod = bayes.2S(
+#' mod = bayes.2S_seq(
 #'   Vobs = dat$Vobs, Z.X = dat$Z, Z.W = dat$Z, r = dat$r,
 #'   kappa = 0.7, update.kappa = FALSE, ndraws = 1e3, chains = 2,
-#'   prop.sd.X = 0.005, parallel = TRUE, dist.X = "weibull"
+#'   prop.sd.X = 0.005, dist.X = "weibull"
 #' )
 #'
 #' # Running the automated search
@@ -74,9 +74,9 @@ search.prop.sd_seq = function(m, ndraws = 1000, succ.min = 3, acc.bounds.X =c(0.
     if(it == 1) { ac.X.cur = mean(m$ac.X)
     prop.sd.X = m$prop.sd.X}
     if(it >1) {
-      sink(file = "NUL", type = "output")
+      invisible(capture.output({
       m = bayes.2S_seq( prev.run = m, ndraws.update = ndraws, prop.sd.X = prop.sd.X)
-      sink(type = "output")
+      }))
       ac.X.cur = mean(m$ac.X.cur)
     }
     acc.bounds.mean = (acc.bounds.X[2]-acc.bounds.X[1])/2 + acc.bounds.X[1]

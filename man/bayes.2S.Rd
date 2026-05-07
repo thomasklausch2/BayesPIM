@@ -15,7 +15,7 @@ bayes.2S(
   kappa.prior = NULL,
   ndraws = 1000,
   prop.sd.X = NULL,
-  chains = 3,
+  chains,
   thining = 1,
   parallel = TRUE,
   update.till.converge = FALSE,
@@ -153,7 +153,11 @@ The Gibbs sampler runs for \code{ndraws} iterations for each of \code{chains} to
 
 If \code{parallel = TRUE}, the Gibbs sampler runs in parallel with one chain per CPU (if possible), using the \code{foreach} package. If this package causes issues on some operating systems, set \code{parallel = FALSE} or use the \link{bayes.2S_seq} function, which iterates over \code{1:chains} using a \code{for} loop. This sequential function may also be useful in Monte Carlo simulations that parallelize experimental replications using \code{foreach}.
 
-We recommend running at least two chains in parallel, and preferably more, to facilitate standard MCMC diagnostics such as the Gelman-Rubin \eqn{R} statistic. Additionally, we suggest first running the sampler for a moderate number of iterations to assess its behavior before using the updating functionality in \code{prev.run} to extend sampling (see below).
+We recommend running at least two chains to facilitate standard MCMC diagnostics
+such as the Gelman-Rubin statistic. For larger analyses, users may run more
+chains, but should ensure that their computing environment permits the requested
+parallel workers. CRAN examples use small sequential runs.
+Additionally, we suggest first running the sampler for a moderate number of iterations to assess its behavior before using the updating functionality in \code{prev.run} to extend sampling (see below).
 
 The option \code{update.till.convergence = TRUE} allows \code{bayes.2S} to run until convergence. Convergence is achieved when \eqn{R < 1.1} for all parameters and the minimum effective sample size \code{min_effs} is reached. The sampler continues updating until convergence is attained or \code{maxit} is reached.
 
@@ -232,6 +236,8 @@ plot( trim.mcmc( mod2$par.X.all, thining = 10) ) # kappa returned as part of the
 }
 \references{
 T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", \url{doi:10.48550/arXiv.2412.16065}.
+
+T. Klausch, B. I. Lissenberg-Witte, and V. M. H. Coupé (2026). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", Statistics in Medicine, 45(8-9), e70433. doi:10.1002/sim.70433
 
 J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, \url{doi:10.2307/2669940}.
 }

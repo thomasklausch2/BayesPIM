@@ -55,7 +55,7 @@ is considered acceptable, and the process continues until \code{succ.min} consec
 successes (doubles) are achieved.
 }
 \examples{
-\donttest{
+\dontrun{
 # Generate data according to Klausch et al. (2025) PIM
 set.seed(2025)
 dat = gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
@@ -66,10 +66,10 @@ dat = gen.dat(kappa = 0.7, n = 1e3, theta = 0.2,
               prob.r  = 1)
 
 # An initial model fit with a moderate number of ndraws (e.g., 1e3)
-mod = bayes.2S(
+mod = bayes.2S_seq(
   Vobs = dat$Vobs, Z.X = dat$Z, Z.W = dat$Z, r = dat$r,
   kappa = 0.7, update.kappa = FALSE, ndraws = 1e3, chains = 2,
-  prop.sd.X = 0.005, parallel = TRUE, dist.X = "weibull"
+  prop.sd.X = 0.005, dist.X = "weibull"
 )
 
 # Running the automated search

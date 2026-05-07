@@ -17,9 +17,8 @@
 #'
 #' @param ndraws Integer. The total number of MCMC draws for the main Gibbs sampler.
 #' @param prop.sd.X Numeric. The standard deviation for the proposal (jumping) distribution in the Metropolis sampler used for updating \eqn{\beta_{xj}}. Can be searched for automatically using \link{search.prop.sd}.
-#' @param chains Integer. The number of MCMC chains to run.
+#' @param chains Integer. The number of MCMC chains to run in sequence.
 #' @param thining Integer. The thinning interval for the MCMC sampler.
-#' @param parallel Logical. If \code{TRUE}, parallel processing is enabled for the Gibbs sampler. Each chain is assigned to one core (via the \code{foreach} package). Alternatively, use \link{bayes.2S_seq} which employs a \code{for} loop over the chains.
 #' @param update.till.converge Logical. If \code{TRUE}, the model is updated iteratively until convergence criteria are met. Convergence is assessed using the Gelman-Rubin diagnostic (\eqn{R<1.1}) and a minimum effective sample size (\code{min_effss}) for each parameter, respectively.
 #' @param maxit Numeric. The maximum number of MCMC draws allowed before interrupting the update process when \code{update.till.converge} is enabled. Default is \code{Inf} (i.e., no automatic interruption).
 #' @param conv.crit Character. Specifies whether the convergence check uses the point estimate (\code{'point'}) or the upper bound (\code{'upper'}) of the Gelman-Rubin diagnostic estimate (\eqn{\hat{R}}).
@@ -63,6 +62,8 @@
 #' @references 
 #' T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", doi:10.48550/arXiv.2412.16065.
 #' 
+#' T. Klausch, B. I. Lissenberg-Witte, and V. M. H. Coupé (2026). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", Statistics in Medicine, 45(8-9), e70433. doi:10.1002/sim.70433
+#' 
 #' J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, doi: 10.2307/2669940.
 #'
 #' @examples
@@ -88,7 +89,6 @@
 #'                 ndraws = 1e4,
 #'                 chains = 4,
 #'                 prop.sd.X = 0.008,
-#'                 parallel = TRUE,
 #'                 dist.X = "weibull")
 #' 
 #' # Inspect results
@@ -99,8 +99,8 @@
 #' gelman.diag(mod$par.X.bi)  # Gelman convergence diagnostics
 #' 
 #' # Model updating
-#' mod_update <- bayes.2S(prev.run = mod)      # Adds ndraws additional MCMC draws
-#' mod_update <- bayes.2S(prev.run = mod, 
+#' mod_update <- bayes.2S_seq(prev.run = mod)      # Adds ndraws additional MCMC draws
+#' mod_update <- bayes.2S_seq(prev.run = mod, 
 #'                        ndraws.update = 1e3) # Adds ndraws.update additional MCMC draws
 #' 
 #' # Example with kappa estimated/updated
@@ -114,7 +114,6 @@
 #'                  ndraws = 1e4,
 #'                  chains = 4,
 #'                  prop.sd.X = 0.008,
-#'                  parallel = TRUE,
 #'                  dist.X = "weibull")
 #' 
 #' # Inspect results
@@ -139,9 +138,8 @@ bayes.2S_seq <- function(
   # Group 3: Main MCMC sampler settings
   ndraws = 1000, 
   prop.sd.X = NULL, 
-  chains = 3, 
+  chains, 
   thining = 1, 
-  parallel = TRUE, 
   update.till.converge = FALSE, 
   maxit = Inf, 
   conv.crit = 'upper', 
@@ -172,10 +170,58 @@ bayes.2S_seq <- function(
   fix.k = FALSE
 ) {
   
-  t0 = Sys.time()
-  if(!is.numeric(maxit)) stop('maxit has to be numeric.')
   
-  if(!is.null(prev.run)){
+  t0 <- Sys.time()
+  
+  .Vobs_supplied <- !missing(Vobs)
+  .chains_supplied <- !missing(chains)
+  .min_effss_supplied <- !missing(min_effss)
+  
+  .Vobs_arg <- if (.Vobs_supplied) Vobs else NULL
+  .chains_arg <- if (.chains_supplied) chains else NULL
+  .min_effss_arg <- if (.min_effss_supplied) min_effss else NULL
+  
+  .validate_bayes_2S_inputs(
+    Vobs = .Vobs_arg,
+    Z.X = Z.X,
+    Z.W = Z.W,
+    r = r,
+    dist.X = dist.X,
+    kappa = kappa,
+    update.kappa = update.kappa,
+    kappa.prior = kappa.prior,
+    ndraws = ndraws,
+    prop.sd.X = prop.sd.X,
+    chains = .chains_arg,
+    thining = thining,
+    parallel = parallel,
+    update.till.converge = update.till.converge,
+    maxit = maxit,
+    conv.crit = conv.crit,
+    min_effss = .min_effss_arg,
+    beta.prior = beta.prior,
+    beta.prior.X = beta.prior.X,
+    sig.prior.X = sig.prior.X,
+    tau.w = tau.w,
+    fix.sigma.X = fix.sigma.X,
+    prev.run = prev.run,
+    update.burnin = update.burnin,
+    ndraws.update = ndraws.update,
+    prev = prev,
+    vanilla = vanilla,
+    ndraws.naive = ndraws.naive,
+    naive.run.prop.sd.X = naive.run.prop.sd.X,
+    par.exp = par.exp,
+    collapsed.g = collapsed.g,
+    k.prior = k.prior,
+    fix.k = fix.k,
+    stage = "initial"
+  )
+  
+  if (!.Vobs_supplied) Vobs <- NULL
+  if (!.chains_supplied) chains <- NULL
+  
+  if (!is.null(prev.run)) {
     chains = length(prev.run$par.X.all)
     dims = dim(as.matrix(prev.run$par.X.all[1]))
     start.val.X = matrix(ncol=dims[2], nrow= chains )
@@ -208,8 +254,50 @@ bayes.2S_seq <- function(
     kappa.prior = prev.run$kappa.prior
     fix.k = prev.run$fix.k
     prev.runtime = prev.run$runtime
+    parallel = prev.run$parallel
     message('Updating previous MCMC run. \n')
   }
+  
+  if (!.min_effss_supplied) {
+    min_effss <- chains * 10
+  }
+  
+  .validate_bayes_2S_inputs(
+    Vobs = Vobs,
+    Z.X = Z.X,
+    Z.W = Z.W,
+    r = r,
+    dist.X = dist.X,
+    kappa = kappa,
+    update.kappa = update.kappa,
+    kappa.prior = kappa.prior,
+    ndraws = ndraws,
+    prop.sd.X = prop.sd.X,
+    chains = chains,
+    thining = thining,
+    parallel = TRUE,
+    update.till.converge = update.till.converge,
+    maxit = maxit,
+    conv.crit = conv.crit,
+    min_effss = min_effss,
+    beta.prior = beta.prior,
+    beta.prior.X = beta.prior.X,
+    sig.prior.X = sig.prior.X,
+    tau.w = tau.w,
+    fix.sigma.X = fix.sigma.X,
+    prev.run = prev.run,
+    update.burnin = update.burnin,
+    ndraws.update = ndraws.update,
+    prev = prev,
+    vanilla = vanilla,
+    ndraws.naive = ndraws.naive,
+    naive.run.prop.sd.X = naive.run.prop.sd.X,
+    par.exp = par.exp,
+    collapsed.g = collapsed.g,
+    k.prior = k.prior,
+    fix.k = fix.k,
+    stage = "effective"
+  )
   
   if(update.kappa & !is.null(kappa.prior)){
     f = find.ab(m=kappa.prior[1], s=kappa.prior[2])
@@ -274,11 +362,26 @@ bayes.2S_seq <- function(
     message('Searching starting values by one naive run \n')
     done = FALSE
     while(!done){
-      mod.simple = bayes.2S_seq(Vobs[!g.fixed], kappa, Z.X = Z.X[!g.fixed,], r=r[!g.fixed], parallel = TRUE,
-                                ndraws=ndraws.naive, chains=3, thining=1, prop.sd.X=naive.run.prop.sd.X,
-                                beta.prior.X = beta.prior.X, sig.prior.X = sig.prior.X, fix.sigma.X = fix.sigma.X,
-                                prev.run = NULL, dist.X = dist.X, update.burnin = TRUE,
-                                beta.prior = 't', vanilla = TRUE)
+      mod.simple <- bayes.2S_seq(
+        Vobs = Vobs[!g.fixed],
+        Z.X = if (is.null(Z.X)) NULL else Z.X[!g.fixed, , drop = FALSE],
+        Z.W = NULL,
+        r = r[!g.fixed],
+        dist.X = dist.X,
+        kappa = kappa,
+        update.kappa = FALSE,
+        ndraws = ndraws.naive,
+        prop.sd.X = naive.run.prop.sd.X,
+        chains = chains,
+        thining = 1,
+        beta.prior.X = beta.prior.X,
+        sig.prior.X = sig.prior.X,
+        fix.sigma.X = fix.sigma.X,
+        prev.run = NULL,
+        update.burnin = TRUE,
+        beta.prior = "t",
+        vanilla = TRUE
+      )
       pars.simple = as.matrix(mod.simple$par.X.bi)
       ini = pars.simple[sample(1: nrow(pars.simple), chains, replace=FALSE),]
       ac.rates = apply(mod.simple$ac.X,2, mean)
@@ -604,8 +707,8 @@ bayes.2S_seq <- function(
       message('Not converged. \n')
       # message(paste( round(g[[1]][,ind], 2), '\n'))
       # message(paste( round(effs), '\n'))
-      if(is.null(ndraws.update)) ret = bayes.2S(prev.run = ret, ndraws = ndraws)
-      else ret = bayes.2S(prev.run = ret, ndraws.update = ndraws.update)
+      if(is.null(ndraws.update)) ret = bayes.2S_seq(prev.run = ret, ndraws = ndraws)
+      else ret = bayes.2S_seq(prev.run = ret, ndraws.update = ndraws.update)
       if(vanilla) {
         g <- gelman.diag(ret$par.X.bi[,-(p1.X+2)])
         effs <- effectiveSize( ret$par.X.bi[,-(p1.X+2)] )

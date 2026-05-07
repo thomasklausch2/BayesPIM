@@ -15,9 +15,8 @@ bayes.2S_seq(
   kappa.prior = NULL,
   ndraws = 1000,
   prop.sd.X = NULL,
-  chains = 3,
+  chains,
   thining = 1,
-  parallel = TRUE,
   update.till.converge = FALSE,
   maxit = Inf,
   conv.crit = "upper",
@@ -61,11 +60,9 @@ bayes.2S_seq(
 
 \item{prop.sd.X}{Numeric. The standard deviation for the proposal (jumping) distribution in the Metropolis sampler used for updating \eqn{\beta_{xj}}. Can be searched for automatically using \link{search.prop.sd}.}
 
-\item{chains}{Integer. The number of MCMC chains to run.}
+\item{chains}{Integer. The number of MCMC chains to run in sequence.}
 
 \item{thining}{Integer. The thinning interval for the MCMC sampler.}
-
-\item{parallel}{Logical. If \code{TRUE}, parallel processing is enabled for the Gibbs sampler. Each chain is assigned to one core (via the \code{foreach} package). Alternatively, use \link{bayes.2S_seq} which employs a \code{for} loop over the chains.}
 
 \item{update.till.converge}{Logical. If \code{TRUE}, the model is updated iteratively until convergence criteria are met. Convergence is assessed using the Gelman-Rubin diagnostic (\eqn{R<1.1}) and a minimum effective sample size (\code{min_effss}) for each parameter, respectively.}
 
@@ -151,7 +148,6 @@ mod <- bayes.2S_seq(Vobs = dat$Vobs,
                 ndraws = 1e4,
                 chains = 4,
                 prop.sd.X = 0.008,
-                parallel = TRUE,
                 dist.X = "weibull")
 
 # Inspect results
@@ -162,8 +158,8 @@ apply(mod$ac.X, 2, mean)  # Acceptance rates per chain
 gelman.diag(mod$par.X.bi)  # Gelman convergence diagnostics
 
 # Model updating
-mod_update <- bayes.2S(prev.run = mod)      # Adds ndraws additional MCMC draws
-mod_update <- bayes.2S(prev.run = mod, 
+mod_update <- bayes.2S_seq(prev.run = mod)      # Adds ndraws additional MCMC draws
+mod_update <- bayes.2S_seq(prev.run = mod, 
                        ndraws.update = 1e3) # Adds ndraws.update additional MCMC draws
 
 # Example with kappa estimated/updated
@@ -177,7 +173,6 @@ mod2 <- bayes.2S_seq(Vobs = dat$Vobs,
                  ndraws = 1e4,
                  chains = 4,
                  prop.sd.X = 0.008,
-                 parallel = TRUE,
                  dist.X = "weibull")
 
 # Inspect results
@@ -188,6 +183,8 @@ plot( trim.mcmc( mod2$par.X.all, thining = 10) ) # kappa returned as part of the
 }
 \references{
 T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", doi:10.48550/arXiv.2412.16065.
+
+T. Klausch, B. I. Lissenberg-Witte, and V. M. H. Coupé (2026). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", Statistics in Medicine, 45(8-9), e70433. doi:10.1002/sim.70433
 
 J. S. Liu and Y. N. Wu, “Parameter Expansion for Data Augmentation,” Journal of the American Statistical Association, vol. 94, no. 448, pp. 1264–1274, 1999, doi: 10.2307/2669940.
 }

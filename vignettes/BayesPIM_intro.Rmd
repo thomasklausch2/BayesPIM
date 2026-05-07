@@ -19,7 +19,7 @@ load("vignette_data.rdata")  # if it's in the same directory as your .Rmd
 ```
 
 ## Introduction
-BayesPIM is a versatile modeling environment for screening and surveillance data, as described in detail in the main reference Klausch et al. (2024). It is a so-called prevalence-incidence mixture (PIM) model with a Bayesian Gibbs sampler as the estimation backend. It requires a specific data structure, as described in detail in the main references. Specifically, for each individual, a numeric vector of screening times (starting at 0) is available. In the case of right censoring, this vector ends in its last position with Inf.
+BayesPIM is a versatile modeling environment for screening and surveillance data, as described in detail in the main reference Klausch et al. (2024, 2026). It is a so-called prevalence-incidence mixture (PIM) model with a Bayesian Gibbs sampler as the estimation backend. It requires a specific data structure, as described in detail in the main references. Specifically, for each individual, a numeric vector of screening times (starting at 0) is available. In the case of right censoring, this vector ends in its last position with Inf.
 
 BayesPIM includes a data-generating function that simulates data according to the model’s assumptions. This is useful for illustration or testing.
 
@@ -311,3 +311,6 @@ As can be seen, the exponential model has higher information criteria values, su
 Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive information criteria for Bayesian models. Stat Comput, 24(6), 997–1016. https://doi.org/10.1007/s11222-013-9416-2
 
 T. Klausch, B. I. Lissenberg-Witte, and V. M. Coupe (2024). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification." arXiv:2412.16065.
+
+T. Klausch, B. I. Lissenberg-Witte, and V. M. H. Coupé (2026). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", Statistics in Medicine, 45(8-9), e70433. doi:10.1002/sim.70433
+
