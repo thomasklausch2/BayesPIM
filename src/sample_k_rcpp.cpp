@@ -9,6 +9,27 @@ IntegerVector sample_k_rcpp(List pobs_norm) {
   for(int i = 0; i < n; ++i) {
     NumericVector p = as<NumericVector>(pobs_norm[i]);
     int len = p.size();
+
+    if (len < 1) {
+      stop("Probability vector %d is empty.", i + 1);
+    }
+
+    double p_sum = 0.0;
+    for(int j = 0; j < len; ++j) {
+      if (!R_finite(p[j])) {
+        stop("Probability vector %d contains a non-finite value at position %d.",
+             i + 1, j + 1);
+      }
+      if (p[j] < 0.0) {
+        stop("Probability vector %d contains a negative value at position %d.",
+             i + 1, j + 1);
+      }
+      p_sum += p[j];
+    }
+
+    if (!R_finite(p_sum) || p_sum <= 0.0) {
+      stop("Probability vector %d must have a finite, positive sum.", i + 1);
+    }
     
     // Initialize result for multinomial sampling
     IntegerVector result(len);

@@ -1,0 +1,289 @@
+#' @title gen_data: Simulate Screening Data for a Prevalence-Incidence Mixture Model
+#'
+#' @description 
+#' Generates synthetic data according to the Bayesian prevalence-incidence mixture (PIM) framework of Klausch et al. (2026) with interval-censored screening outcomes. 
+#' The function simulates continuous or discrete baseline covariates, event times from one of several parametric families, and irregular screening schedules, 
+#' yielding interval-censored observations suitable for testing or demonstrating PIM-based or other interval-censored survival methods.
+#'
+#' @details 
+#' The data-generating process includes:
+#'
+#' \enumerate{
+#'   \item \strong{Covariates \eqn{X}:}
+#'         Continuous multivariate normal distributed covariates are simulated using a correlation structure specified by \code{rho} and a common standard deviation \code{s}. 
+#'         If \code{p_discrete = 1}, a single discrete covariate is added, drawn from \eqn{\mathrm{Bernoulli}(0.5)}.
+#'
+#'   \item \strong{Latent Times \eqn{t}:}
+#'         An accelerated failure time (AFT) model is used, with linear
+#'         predictor
+#'         \deqn{\eta_i = \beta_{t0} + \beta_t^\top x_{ti},}{
+#'               eta_i = beta_t0 + beta_t' x_ti,}
+#'         where \eqn{\beta_{t0}} is set by \code{mu_t}. Covariates multiply
+#'         event times by \eqn{\exp(\eta_i)} relative to the corresponding
+#'         baseline family.
+#'
+#'         For \code{"weibull"}, \code{"lognormal"}, and \code{"loglog"}
+#'         (log-logistic), latent times are generated from
+#'         \deqn{\log(t_i) = \eta_i + \sigma_t \epsilon_i.}{
+#'               log(t_i) = eta_i + sigma_t * epsilon_i.}
+#'         For \code{"gamma"},
+#'         \deqn{t_i \mid x_{ti} \sim
+#'           \mathrm{Gamma}\{\sigma_t^{-2},
+#'           \sigma_t^{-2}\exp(-\eta_i)\},}{
+#'           t_i | x_ti ~ Gamma(shape = sigma_t^-2,
+#'           rate = sigma_t^-2 * exp(-eta_i)),}
+#'         so that \eqn{E(t_i \mid x_{ti}) = \exp(\eta_i)} and
+#'         \eqn{\sigma_t} is the conditional coefficient of variation.
+#'         For \code{"gengamma"}, the Prentice generalized gamma is generated
+#'         with location \eqn{\eta_i}, scale \eqn{\sigma_t}, and signed shape
+#'         parameter \code{q}.
+#'
+#'   \item \strong{Irregular Screening Schedules \eqn{V_i}:}
+#'         Each individual has multiple screening times generated randomly between \code{v_min} and \code{v_max}, 
+#'         ending in right censoring or the time of detection. 
+#'         These screening times (including a 0 for baseline and \code{Inf} for censoring) are returned in \code{v_obs}.
+#'
+#'   \item \strong{Prevalence Indicator \eqn{g_i}:}
+#'         Baseline prevalence is modeled via either a probit or logit link, consistent with:
+#'         \deqn{w_i = \beta_{g0} + \beta_g^\top x_{gi} + \psi_i,}{
+#'               w_i = beta_g0 + beta_g' x_gi + noise,}
+#'         where \eqn{\beta_{g0}} is determined by \code{theta}, and \eqn{\beta_g} by \code{beta_g}.
+#'         Specifically:
+#'         \itemize{
+#'           \item If \code{sel_mod = "probit"}, then \eqn{\beta_{g0} = \mathrm{qnorm}(\theta)}.
+#'           \item If \code{sel_mod = "logit"}, then \eqn{\beta_{g0} = \log(\theta / (1-\theta))}.
+#'         }
+#'         We set \eqn{g_i = 1} if \eqn{w_i > 0}, and \eqn{g_i = 0} otherwise.
+#'
+#'   \item \strong{Baseline Test Missingness \eqn{r_i}:}
+#'         A baseline test indicator \eqn{r_i \in \{0,1\}} is generated via \eqn{\mathrm{Bernoulli}(\text{prob_r})}, 
+#'         so \eqn{r_i = 1} means the baseline test is performed and \eqn{r_i = 0} means it is missing.
+#'
+#'   \item \strong{Test Sensitivity \eqn{\kappa}:}
+#'         A misclassification parameter \eqn{\kappa} (test sensitivity) can be specified via \code{kappa}. 
+#'         If \eqn{\kappa < 1}, some truly positive cases are missed.
+#' }
+#'
+#' @param kappa Numeric. Test sensitivity parameter \eqn{\kappa} used when generating misclassification. A value of 1 implies perfect sensitivity.
+#' @param n Integer. Sample size.
+#' @param p Integer. Number of continuous multivariate normal baseline covariates to simulate.
+#' @param p_discrete Integer. If \code{1}, include an additional discrete covariate \eqn{X_{\mathrm{discrete}}} from \eqn{\mathrm{Bernoulli}(0.5)}; otherwise, none.
+#' @param rho Numeric. A single correlation between the continuous covariates:
+#'          when \code{p > 1}, every off-diagonal entry of their correlation matrix
+#'          is set to \code{rho}. It must lie in \eqn{(-1/(p-1), 1)}, outside of
+#'          which the implied equicorrelation matrix is not positive definite; it is
+#'          ignored when \code{p <= 1}.
+#' @param s Numeric. Standard deviation(s) of the continuous covariates. Either a
+#'          single positive value shared by all \code{p} continuous covariates, or a
+#'          vector of length \code{p} giving one positive standard deviation per covariate.
+#' @param sigma_t Numeric. Positive family scale/dispersion parameter
+#'   \eqn{\sigma_t}. For \code{dist = "gamma"}, it is the conditional
+#'   coefficient of variation. For the other families, it is the AFT scale
+#'   parameter on the log-time distribution.
+#' @param mu_t Numeric. Intercept \eqn{\beta_{t0}} in the latent-time linear
+#'   predictor. For \code{dist = "gamma"}, it is the log conditional mean when
+#'   all covariates are zero. It is prepended to \code{beta_t} when forming the
+#'   full coefficient vector.
+#' @param beta_t Numeric vector. The coefficients \eqn{\beta_t} for the AFT model.
+#'               Combined with \code{mu_t}, the linear predictor is
+#'               \code{cbind(1, x_i) \%*\% c(mu_t, beta_t)}.
+#' @param beta_g Numeric vector. The coefficients \eqn{\beta_g} for the prevalence model.
+#'               The intercept \eqn{\beta_{g0}} is derived from \code{theta}.
+#' @param theta Numeric. Baseline prevalence parameter on the probability scale. Under:
+#' \itemize{
+#'   \item \code{sel_mod = "probit"}: \eqn{\beta_{g0} = \mathrm{qnorm}(\theta)}.
+#'   \item \code{sel_mod = "logit"}:  \eqn{\beta_{g0} = \log(\theta / (1 - \theta))}.
+#' }
+#' @param v_min Numeric. Minimum spacing for irregular screening intervals.
+#' @param v_max Numeric. Maximum spacing for irregular screening intervals.
+#' @param mean_rc Numeric. Mean of the exponential distribution controlling a random right-censoring time \eqn{t_{\mathrm{rc}}} after the first screening.
+#' @param dist Character. Distribution for latent times \eqn{t_i}:
+#'   \code{"weibull"}, \code{"lognormal"}, \code{"loglog"} (log-logistic),
+#'   \code{"gamma"}, or \code{"gengamma"} (Prentice generalized gamma).
+#' @param q Numeric. Signed Prentice shape parameter for
+#'   \code{dist = "gengamma"}; ignored otherwise.
+#' @param sel_mod Character. Either \code{"probit"} or \code{"logit"}, specifying the link function for the prevalence model.
+#' @param prob_r Numeric. Probability that a baseline test is performed (\eqn{r_i = 1}). If \code{prob_r = 0}, no baseline tests are done.
+#'
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{\code{v_obs}}{A list of length \code{n}, each entry containing screening times. 
+#'                      The first element is 0 (baseline), and \code{Inf} may indicate right censoring.
+#'                      The right-censoring time is drawn as the first post-baseline screening time
+#'                      plus an exponential increment, so it always exceeds that screening time and
+#'                      every individual receives at least one screening after baseline. Consequently
+#'                      the coding \code{c(0, Inf)}, a negative or missing baseline test followed by
+#'                      right censoring before the first regular screening, is never generated here,
+#'                      even though \code{\link{bayespim}} accepts and models that case.}
+#'   \item{\code{times_true}}{Numeric vector of length \code{n} giving the true latent times \eqn{t_i}.}
+#'   \item{\code{x}}{Numeric matrix of dimension \eqn{n \times p} (plus an extra column if \code{p_discrete = 1}) containing the covariates.}
+#'   \item{\code{g}}{Binary vector of length \code{n}, indicating whether an individual is truly positive at baseline (\eqn{g_i = 1}).}
+#'   \item{\code{r}}{Binary vector of length \code{n}, indicating whether the baseline test was performed (\eqn{r_i = 1}) or missing (\eqn{r_i = 0}). This is the vector passed to the \code{r} argument of \code{\link{bayespim}}.}
+#'   \item{\code{prob_g}}{Numeric vector of length \code{n} giving the true prevalence probabilities, \eqn{P(g_i = 1)}.}
+#' }
+#' 
+#' @references 
+#' T. Klausch, B. I. Lissenberg-Witte, and V. M. H. Coupé (2026). "A Bayesian prevalence-incidence mixture model for screening outcomes with misclassification.", Statistics in Medicine, 45(8-9), e70433. doi:10.1002/sim.70433
+#' 
+#' @examples
+#' # Generate a small dataset for testing
+#' set.seed(2025)
+#' sim_data <- gen_data(n = 20, p = 1, p_discrete = 1,
+#'                     sigma_t = 0.5, mu_t = 2,
+#'                     beta_t = c(0.2, 0.2), beta_g = c(0.5, -0.2),
+#'                     theta = 0.2,
+#'                     dist = "weibull", sel_mod = "probit")
+#' names(sim_data)
+#' 
+#' @export
+gen_data <- function(kappa = 0.7,
+                    n = 1000,
+                    p = 2,
+                    p_discrete = 0,
+                    rho = 0,
+                    s = 1,
+                    sigma_t = 1/2,
+                    mu_t = 4,
+                    beta_t = NULL,
+                    beta_g = NULL,
+                    theta  = 0.15,
+                    v_min = 1,
+                    v_max = 6,
+                    mean_rc = 40,
+                    dist = 'weibull',
+                    q = 1,
+                    sel_mod = 'probit',
+                    prob_r  = 0) {
+
+  # Simulate covariates.
+  if (p > 0) {
+    standard_deviations <- if (length(s) == 1L) rep(s, p) else s
+    if (length(standard_deviations) != p ||
+        !all(is.finite(standard_deviations)) ||
+        any(standard_deviations <= 0)) {
+      stop(
+        "`s` must be a single positive number or one positive number per continuous covariate.",
+        call. = FALSE
+      )
+    }
+    if (length(rho) != 1L || !is.numeric(rho) || !is.finite(rho)) {
+      stop(
+        "`rho` must be a single finite correlation between the continuous covariates.",
+        call. = FALSE
+      )
+    }
+    # Equicorrelation is positive definite only for -1/(p - 1) < rho < 1; at or
+    # beyond either bound the covariance matrix is singular or indefinite.
+    if (p > 1) {
+      min_correlation <- -1 / (p - 1)
+      if (rho <= min_correlation || rho >= 1) {
+        stop(
+          sprintf(
+            paste0(
+              "`rho` must be a single correlation in (%s, 1) for p = %d continuous ",
+              "covariates; outside this range the implied equicorrelation matrix ",
+              "is not positive definite."
+            ),
+            format(min_correlation, digits = 4), p
+          ),
+          call. = FALSE
+        )
+      }
+    }
+    correlation <- matrix(rho, p, p)
+    diag(correlation) <- 1
+    x <- mvrnorm(
+      n,
+      mu = rep(0, p),
+      Sigma = cor2cov(correlation, standard_deviations)
+    )
+    # mvrnorm drops to a plain vector when a single row is drawn.
+    x <- matrix(x, nrow = n, ncol = p)
+  } else {
+    x <- NULL
+  }
+
+  # Simulate a discrete covariate.
+  if (p_discrete == 1) {
+    x_discrete <- rbinom(n, 1, 0.5)
+    x <- cbind(x, x_discrete)
+  }
+  if (!is.null(x)) colnames(x) <- paste0("x_", seq_len(ncol(x)))
+
+  x1 <- if (is.null(x)) matrix(1, nrow = n, ncol = 1L) else cbind(1, x)
+
+  # Simulate latent incidence times.
+  if (dist == 'weibull' | dist == 'loglog' | dist == 'lognormal') {
+    if (dist == 'weibull') {
+      e_t <- r_ev(n)
+    }
+    if (dist == 'loglog') {
+      e_t <- rlog(n)
+    }
+    if (dist == 'lognormal') {
+      e_t <- rnorm(n)
+    }
+    times <- x1 %*% c(mu_t, beta_t) + sigma_t * e_t
+    times <- as.numeric(exp(times))
+  }
+  
+  if(dist == 'gamma'){
+    par = trans_par_gamma(x1, par = c(mu_t, beta_t, log(sigma_t)))
+    times <- rgamma(n, shape = par[,"shape"], rate = par[,"rate"])
+  }
+
+  # Simulate latent incidence times using the generalized gamma distribution.
+  if (dist == 'gengamma') {
+    times <- flexsurv::rgengamma(
+      n,
+      mu = drop(x1 %*% c(mu_t, beta_t)),
+      sigma = sigma_t,
+      Q = q
+    )
+  }
+
+  screening_times <- list()
+  censoring_times <- numeric()
+  for (i in 1:n) {
+    v_i <- runif(1, v_min, v_max)
+    censoring_times[i] <- v_i + rexp(1, 1 / mean_rc)
+    j <- 1
+    while (v_i[j] < censoring_times[i]) {
+      v_i[j+1] <- runif(1, v_i[j] + v_min, v_i[j] + v_max)
+      j <- j + 1
+    }
+    v_i <- v_i[-length(v_i)]
+    v_i <- c(0, v_i, Inf)
+    screening_times[[i]] <- v_i
+  }
+
+  # The prevalence probability is the link applied to this branch's linear
+  # predictor, so it is formed here rather than reconstructed on return.
+  if(sel_mod == 'probit'){
+    eta_g  <- x1 %*% as.matrix(c(qnorm(theta), beta_g))
+    prob_g <- pnorm(eta_g)
+    g      <- as.numeric(eta_g + rnorm(n) > 0)
+  }
+  if(sel_mod == 'logit'){
+    eta_g  <- x1 %*% as.matrix(c(log(theta / (1 - theta)), beta_g))
+    prob_g <- 1 / (1 + exp(-eta_g))
+    g      <- rbinom(n, 1, prob_g)
+  }
+
+  r = rbinom(n, 1, prob_r)
+  v_obs <- v_to_v_obs(
+    v = screening_times,
+    times = times,
+    kappa = kappa,
+    g = g,
+    baseline_test = r
+  )
+  list(
+    v_obs = v_obs,
+    times_true = times,
+    x = x,
+    g = g,
+    r = r,
+    prob_g = prob_g
+  )
+}

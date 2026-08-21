@@ -1,6 +1,6 @@
 Package: BayesPIM
 Title: Bayesian Prevalence-Incidence Mixture Model
-Version: 1.0.1
+Version: 2.0
 Authors@R: 
     person("Thomas", "Klausch", email = "t.klausch@amsterdamumc.nl", role = c("aut", "cre"))
 Description: Models time-to-event data from interval-censored
@@ -10,25 +10,31 @@ Description: Models time-to-event data from interval-censored
     found in Klausch, Lissenberg-Witte and Coupé (2026)
     <doi:10.1002/sim.70433>.
 License: MIT + file LICENSE
-URL: https://github.com/thomasklausch2/bayespim
+URL: https://github.com/thomasklausch2/BayesPIM
 BugReports: https://github.com/thomasklausch2/BayesPIM/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: Rcpp
 Imports:
     Rcpp,
-    mvtnorm,
     MASS,
-    ggamma,
     doParallel,
     foreach,
     parallel,
-    actuar
+    actuar,
+    posterior,
+    survival,
+    flexsurv,
+    graphics,
+    grDevices,
+    stats,
+    utils
 Depends: 
     R (>= 3.5.0),
     coda
-Suggests: 
+Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    bookdown
 VignetteBuilder: knitr
 Config/roxygen2/version: 8.0.0

@@ -1,0 +1,34 @@
+#' Converged example BayesPIM fit
+#'
+#' A converged Weibull prevalence-incidence mixture model fitted to simulated
+#' screening data. The object is provided so examples of post-estimation
+#' functions can run without refitting the model.
+#'
+#' @format A \code{"bayespim"} object containing four MCMC chains with 2,000
+#'   generated and stored draws each (\code{save_every = 1}). The first 1,000
+#'   draws per chain are marked as warm-up. Its continuous covariate was
+#'   standardized internally and its binary covariate was left unchanged;
+#'   stored coefficients are on the original covariate scale. The fit
+#'   contains the simulated screening observations, incidence and prevalence
+#'   covariates, fitted parameter chains, convergence diagnostics, and the
+#'   settings needed by BayesPIM post-estimation methods.
+#'
+#' @details
+#' The data were generated with \code{set.seed(2025)} using the data-generating
+#' settings shown in the main \code{bayespim()} documentation: 1,000
+#' individuals, Weibull incidence times, two covariates, prevalence probability
+#' 0.2 at zero-valued covariates, and fixed test sensitivity 0.7.
+#'
+#' The collapsed slice sampler was run once with automatic convergence updating
+#' enabled, although no update was required. All monitored parameters met
+#' R-hat at most 1.01 and effective sample size at least 400 after the initial
+#' 2,000 draws per chain.
+#'
+#' @usage data(mod)
+#' @source Simulated and fitted with \code{gen_data()} and \code{bayespim()}.
+#' @keywords datasets
+#' @examples
+#' data(mod)
+#' inherits(mod, "bayespim")
+#' mod$convergence$converged
+"mod"

@@ -10,107 +10,76 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// augment_C_Rcpp
-NumericVector augment_C_Rcpp(List pobs, List Vobs, NumericVector X, double kappa, NumericVector theta1, NumericVector r, LogicalVector g_fixed);
-RcppExport SEXP _BayesPIM_augment_C_Rcpp(SEXP pobsSEXP, SEXP VobsSEXP, SEXP XSEXP, SEXP kappaSEXP, SEXP theta1SEXP, SEXP rSEXP, SEXP g_fixedSEXP) {
+// augment_g_collapsed_rcpp
+NumericVector augment_g_collapsed_rcpp(NumericVector interval_sums, List v_obs, double kappa, NumericVector prob_g, NumericVector r, LogicalVector g_fixed);
+RcppExport SEXP _BayesPIM_augment_g_collapsed_rcpp(SEXP interval_sumsSEXP, SEXP v_obsSEXP, SEXP kappaSEXP, SEXP prob_gSEXP, SEXP rSEXP, SEXP g_fixedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type pobs(pobsSEXP);
-    Rcpp::traits::input_parameter< List >::type Vobs(VobsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type interval_sums(interval_sumsSEXP);
+    Rcpp::traits::input_parameter< List >::type v_obs(v_obsSEXP);
     Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta1(theta1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type prob_g(prob_gSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type g_fixed(g_fixedSEXP);
-    rcpp_result_gen = Rcpp::wrap(augment_C_Rcpp(pobs, Vobs, X, kappa, theta1, r, g_fixed));
-    return rcpp_result_gen;
-END_RCPP
-}
-// augment_C_collapsed_rcpp
-NumericVector augment_C_collapsed_rcpp(NumericVector w_sums, List Vobs, double kappa, NumericVector theta1, NumericVector r, LogicalVector g_fixed);
-RcppExport SEXP _BayesPIM_augment_C_collapsed_rcpp(SEXP w_sumsSEXP, SEXP VobsSEXP, SEXP kappaSEXP, SEXP theta1SEXP, SEXP rSEXP, SEXP g_fixedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type w_sums(w_sumsSEXP);
-    Rcpp::traits::input_parameter< List >::type Vobs(VobsSEXP);
-    Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta1(theta1SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type g_fixed(g_fixedSEXP);
-    rcpp_result_gen = Rcpp::wrap(augment_C_collapsed_rcpp(w_sums, Vobs, kappa, theta1, r, g_fixed));
+    rcpp_result_gen = Rcpp::wrap(augment_g_collapsed_rcpp(interval_sums, v_obs, kappa, prob_g, r, g_fixed));
     return rcpp_result_gen;
 END_RCPP
 }
 // fc_kappa_rcpp
-double fc_kappa_rcpp(List Vobs, NumericVector j_, double a, double b, NumericVector g, NumericVector r, LogicalVector g_fixed);
-RcppExport SEXP _BayesPIM_fc_kappa_rcpp(SEXP VobsSEXP, SEXP j_SEXP, SEXP aSEXP, SEXP bSEXP, SEXP gSEXP, SEXP rSEXP, SEXP g_fixedSEXP) {
+double fc_kappa_rcpp(List v_obs, NumericVector j_, double a, double b, NumericVector g, NumericVector r, LogicalVector g_fixed);
+RcppExport SEXP _BayesPIM_fc_kappa_rcpp(SEXP v_obsSEXP, SEXP j_SEXP, SEXP aSEXP, SEXP bSEXP, SEXP gSEXP, SEXP rSEXP, SEXP g_fixedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type Vobs(VobsSEXP);
+    Rcpp::traits::input_parameter< List >::type v_obs(v_obsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type j_(j_SEXP);
     Rcpp::traits::input_parameter< double >::type a(aSEXP);
     Rcpp::traits::input_parameter< double >::type b(bSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type g(gSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type g_fixed(g_fixedSEXP);
-    rcpp_result_gen = Rcpp::wrap(fc_kappa_rcpp(Vobs, j_, a, b, g, r, g_fixed));
+    rcpp_result_gen = Rcpp::wrap(fc_kappa_rcpp(v_obs, j_, a, b, g, r, g_fixed));
     return rcpp_result_gen;
 END_RCPP
 }
-// lookUpMat_rcpp
-NumericMatrix lookUpMat_rcpp(List L, IntegerVector a);
-RcppExport SEXP _BayesPIM_lookUpMat_rcpp(SEXP LSEXP, SEXP aSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type L(LSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type a(aSEXP);
-    rcpp_result_gen = Rcpp::wrap(lookUpMat_rcpp(L, a));
-    return rcpp_result_gen;
-END_RCPP
-}
-// P_vobs_Rcpp
-List P_vobs_Rcpp(List Vobs, double kappa);
-RcppExport SEXP _BayesPIM_P_vobs_Rcpp(SEXP VobsSEXP, SEXP kappaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type Vobs(VobsSEXP);
-    Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
-    rcpp_result_gen = Rcpp::wrap(P_vobs_Rcpp(Vobs, kappa));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pdist_rcpp
-NumericVector pdist_rcpp(NumericVector q, NumericMatrix par, std::string dist);
-RcppExport SEXP _BayesPIM_pdist_rcpp(SEXP qSEXP, SEXP parSEXP, SEXP distSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type q(qSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type par(parSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
-    rcpp_result_gen = Rcpp::wrap(pdist_rcpp(q, par, dist));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pnorm_rcpp
-List pnorm_rcpp(NumericVector pobs_vec, List Vobs, NumericVector Vobs_L, NumericVector Vobs_R, NumericMatrix cur_par_X, std::string dist_X, bool collapsed_g);
-RcppExport SEXP _BayesPIM_pnorm_rcpp(SEXP pobs_vecSEXP, SEXP VobsSEXP, SEXP Vobs_LSEXP, SEXP Vobs_RSEXP, SEXP cur_par_XSEXP, SEXP dist_XSEXP, SEXP collapsed_gSEXP) {
+// interval_probs_rcpp
+List interval_probs_rcpp(NumericVector pobs_vec, List v_obs, NumericVector v_obs_l, NumericVector v_obs_r, NumericMatrix cur_dist_par_t, std::string dist);
+RcppExport SEXP _BayesPIM_interval_probs_rcpp(SEXP pobs_vecSEXP, SEXP v_obsSEXP, SEXP v_obs_lSEXP, SEXP v_obs_rSEXP, SEXP cur_dist_par_tSEXP, SEXP distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type pobs_vec(pobs_vecSEXP);
-    Rcpp::traits::input_parameter< List >::type Vobs(VobsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Vobs_L(Vobs_LSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Vobs_R(Vobs_RSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type cur_par_X(cur_par_XSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dist_X(dist_XSEXP);
-    Rcpp::traits::input_parameter< bool >::type collapsed_g(collapsed_gSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnorm_rcpp(pobs_vec, Vobs, Vobs_L, Vobs_R, cur_par_X, dist_X, collapsed_g));
+    Rcpp::traits::input_parameter< List >::type v_obs(v_obsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v_obs_l(v_obs_lSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v_obs_r(v_obs_rSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type cur_dist_par_t(cur_dist_par_tSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
+    rcpp_result_gen = Rcpp::wrap(interval_probs_rcpp(pobs_vec, v_obs, v_obs_l, v_obs_r, cur_dist_par_t, dist));
+    return rcpp_result_gen;
+END_RCPP
+}
+// look_up_mat_rcpp
+NumericMatrix look_up_mat_rcpp(List v_obs, IntegerVector interval_indices);
+RcppExport SEXP _BayesPIM_look_up_mat_rcpp(SEXP v_obsSEXP, SEXP interval_indicesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type v_obs(v_obsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type interval_indices(interval_indicesSEXP);
+    rcpp_result_gen = Rcpp::wrap(look_up_mat_rcpp(v_obs, interval_indices));
+    return rcpp_result_gen;
+END_RCPP
+}
+// p_v_obs_rcpp
+List p_v_obs_rcpp(List v_obs, double kappa);
+RcppExport SEXP _BayesPIM_p_v_obs_rcpp(SEXP v_obsSEXP, SEXP kappaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type v_obs(v_obsSEXP);
+    Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
+    rcpp_result_gen = Rcpp::wrap(p_v_obs_rcpp(v_obs, kappa));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -127,13 +96,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BayesPIM_augment_C_Rcpp", (DL_FUNC) &_BayesPIM_augment_C_Rcpp, 7},
-    {"_BayesPIM_augment_C_collapsed_rcpp", (DL_FUNC) &_BayesPIM_augment_C_collapsed_rcpp, 6},
+    {"_BayesPIM_augment_g_collapsed_rcpp", (DL_FUNC) &_BayesPIM_augment_g_collapsed_rcpp, 6},
     {"_BayesPIM_fc_kappa_rcpp", (DL_FUNC) &_BayesPIM_fc_kappa_rcpp, 7},
-    {"_BayesPIM_lookUpMat_rcpp", (DL_FUNC) &_BayesPIM_lookUpMat_rcpp, 2},
-    {"_BayesPIM_P_vobs_Rcpp", (DL_FUNC) &_BayesPIM_P_vobs_Rcpp, 2},
-    {"_BayesPIM_pdist_rcpp", (DL_FUNC) &_BayesPIM_pdist_rcpp, 3},
-    {"_BayesPIM_pnorm_rcpp", (DL_FUNC) &_BayesPIM_pnorm_rcpp, 7},
+    {"_BayesPIM_interval_probs_rcpp", (DL_FUNC) &_BayesPIM_interval_probs_rcpp, 6},
+    {"_BayesPIM_look_up_mat_rcpp", (DL_FUNC) &_BayesPIM_look_up_mat_rcpp, 2},
+    {"_BayesPIM_p_v_obs_rcpp", (DL_FUNC) &_BayesPIM_p_v_obs_rcpp, 2},
     {"_BayesPIM_sample_k_rcpp", (DL_FUNC) &_BayesPIM_sample_k_rcpp, 1},
     {NULL, NULL, 0}
 };

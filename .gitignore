@@ -1,2 +1,17 @@
+# macOS Finder metadata
+.DS_Store
+
+# R session state
+.Rhistory
+.Rapp.history
+.Rproj.user
+.RData
+
+# Build artifacts and check output
+*.o
+*.so
+*.dll
+*.tar.gz
+*.Rcheck/
 /doc/
 /Meta/
