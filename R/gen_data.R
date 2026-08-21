@@ -56,7 +56,8 @@
 #'         We set \eqn{g_i = 1} if \eqn{w_i > 0}, and \eqn{g_i = 0} otherwise.
 #'
 #'   \item \strong{Baseline Test Missingness \eqn{r_i}:}
-#'         A baseline test indicator \eqn{r_i \in \{0,1\}} is generated via \eqn{\mathrm{Bernoulli}(\text{prob_r})}, 
+#'         A baseline test indicator \eqn{r_i \in \{0,1\}} is drawn from a Bernoulli
+#'         distribution with success probability \code{prob_r},
 #'         so \eqn{r_i = 1} means the baseline test is performed and \eqn{r_i = 0} means it is missing.
 #'
 #'   \item \strong{Test Sensitivity \eqn{\kappa}:}
