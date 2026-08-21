@@ -24,7 +24,7 @@
 * Two defaults changed: `kappa` no longer defaults to `0.5` and must be given
   explicitly when `update_kappa = FALSE`, and the effective-sample-size target
   `min_effss` rose from `chains * 10` to `chains * 100`.
-* The generalized gamma is reparameterised to the Prentice form (location,
+* The generalized gamma is reparameterized to the Prentice form (location,
   scale, signed shape `Q`) using **flexsurv**, replacing the **ggamma**
   parameterisation of 1.0.1. Fitted shape values are not comparable across
   versions, and the model is now available only with the collapsed sampler.
@@ -37,18 +37,18 @@
   augments exact event times. Both show lower autocorrelation and faster
   convergence than the Metropolis-Hastings sampler of 1.0.1, which remains
   available as `sampler = "mh"`.
-* **Gamma incidence times** (`dist = "gamma"`), parameterised through the
+* **Gamma incidence times** (`dist = "gamma"`), parameterized through the
   conditional mean and coefficient of variation.
 * **`summary()` and `plot()` methods** for fitted models, reporting posterior
   quantiles and convergence diagnostics for each parameter block.
-* **Revised convergence assessment** using rank-normalised split R-hat and
+* **Revised convergence assessment** using rank-normalized split R-hat and
   effective sample size from the **posterior** package, replacing
   `coda::gelman.diag()`. `update_till_converge = TRUE` extends sampling
   automatically until `max_rhat` and `min_effss` are met.
 * **Reproducibility.** `seed_chains` sets one seed per chain and the
   end-of-chain RNG state is stored, so a run continued through `prev_run` is
   identical to an uninterrupted run of the same length.
-* **Covariate standardisation** (`standardize_covariates`) and internal time
+* **Covariate standardization** (`standardize_covariates`) and internal time
   rescaling (`rescale_times`), both enabled by default, with returned
   coefficients on the original scale.
 * **User-supplied priors** through `log_prior_fun`; the default is exported as

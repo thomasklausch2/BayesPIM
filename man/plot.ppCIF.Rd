@@ -42,9 +42,9 @@ character vector of length two.}
 axis limits. A common \code{xlim} is used for both panels when
 \code{type = "both"}. The default probability limits are \code{c(0, 1)}.}
 
-\item{col}{Line colour.}
+\item{col}{Line color.}
 
-\item{ci_col}{Credible-region fill colour. If \code{NULL}, a transparent
+\item{ci_col}{Credible-region fill color. If \code{NULL}, a transparent
 version of \code{col} is used.}
 
 \item{lwd}{Line width.}

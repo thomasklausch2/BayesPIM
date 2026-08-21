@@ -184,7 +184,7 @@ unspecified, \code{ndraws} is used.}
 
 \item{prev}{Logical. If \code{TRUE}, prevalence adjustment is applied; if \code{FALSE}, prevalence is assumed to be zero.}
 
-\item{par_exp}{Logical. If \code{TRUE}, the parameter expansion technique of Liu & Wiu (1999) with a Haar prior is employed for updating the regression coefficients (\eqn{\beta_{wj}}) in the prevalence model. Experimental: tests suggest that it does not improve convergence or reduce autocorrelation.}
+\item{par_exp}{Logical. If \code{TRUE}, the parameter expansion technique of Liu & Wu (1999) with a Haar prior is employed for updating the regression coefficients (\eqn{\beta_{wj}}) in the prevalence model. Experimental: tests suggest that it does not improve convergence or reduce autocorrelation.}
 
 \item{rescale_times}{Logical. If \code{TRUE}, screening times are rescaled
 internally by the median latest finite observation time to improve numerical
@@ -210,7 +210,7 @@ used directly. Values must lie between \code{0} and \code{1}.}
 \item{silent}{Logical. If \code{TRUE}, suppress the progress information
 printed while the model is fitted and updated, namely the notice that a
 previous run is being updated and the convergence diagnostics reported
-after each set of draws. Warnings and errors are still signalled, and the
+after each set of draws. Warnings and errors are still signaled, and the
 diagnostics remain available in the \code{convergence} element of the
 returned object. Unlike most arguments, \code{silent} is never inherited
 from \code{prev_run}: it applies only to the current call, so an update of
@@ -369,7 +369,7 @@ Additionally, we suggest first running the sampler for a moderate number of iter
 
 The option \code{update_till_converge = TRUE} allows \code{bayespim} to run until convergence. Convergence is achieved when the rank-normalized split R-hat calculated by \code{posterior::rhat()} is at most \code{max_rhat} for every sampled parameter and the minimum effective sample size calculated by \code{posterior::ess_mean()} reaches \code{min_effss}. The diagnostics use every stored post-warm-up draw; no additional diagnostic thinning is applied. The current diagnostics are always calculated, stored, and printed. If automated updating is enabled, the sampler continues updating and printing diagnostics until convergence is attained or \code{maxit} is reached.
 
-Setting \code{silent = TRUE} suppresses this printing for both forms of updating, the automated loop just described and a manual update requested through \code{prev_run}. Only the progress output is withheld: the diagnostics are still calculated and stored in the \code{convergence} element of the returned object, and warnings and errors are still signalled.
+Setting \code{silent = TRUE} suppresses this printing for both forms of updating, the automated loop just described and a manual update requested through \code{prev_run}. Only the progress output is withheld: the diagnostics are still calculated and stored in the \code{convergence} element of the returned object, and warnings and errors are still signaled.
 
 The priors for the regression coefficients and distributional parameters
 can be controlled using \code{beta_prior}, \code{tau_t},

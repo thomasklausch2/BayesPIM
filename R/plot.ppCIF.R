@@ -20,8 +20,8 @@
 #' @param xlim,ylim Optional increasing numeric vectors of length two giving
 #'   axis limits. A common \code{xlim} is used for both panels when
 #'   \code{type = "both"}. The default probability limits are \code{c(0, 1)}.
-#' @param col Line colour.
-#' @param ci_col Credible-region fill colour. If \code{NULL}, a transparent
+#' @param col Line color.
+#' @param ci_col Credible-region fill color. If \code{NULL}, a transparent
 #'   version of \code{col} is used.
 #' @param lwd Line width.
 #' @param ... Further graphical arguments passed to \code{\link[graphics]{plot.default}}.

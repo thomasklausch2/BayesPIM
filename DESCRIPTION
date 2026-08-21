@@ -13,6 +13,7 @@ License: MIT + file LICENSE
 URL: https://github.com/thomasklausch2/BayesPIM
 BugReports: https://github.com/thomasklausch2/BayesPIM/issues
 Encoding: UTF-8
+Language: en-US
 Roxygen: list(markdown = TRUE)
 LinkingTo: Rcpp
 Imports:
