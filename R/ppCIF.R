@@ -173,9 +173,12 @@ ppCIF <- function(
     )
   }
 
+  # Fixed values are repeated per row: assigning the length-k vector directly
+  # to the n x k sub-matrix would fill it column-major and recycle the values
+  # down the rows whenever two or more covariates are fixed.
   if (!is.null(fix_x_t)) {
     fixed_t <- !is.na(fix_x_t)
-    x_t[, fixed_t] <- fix_x_t[fixed_t]
+    x_t[, fixed_t] <- rep(fix_x_t[fixed_t], each = nrow(x_t))
   }
   if (
     isTRUE(mod$prev) &&
@@ -187,7 +190,7 @@ ppCIF <- function(
   }
   if (!is.null(fix_x_g)) {
     fixed_g <- !is.na(fix_x_g)
-    x_g[, fixed_g] <- fix_x_g[fixed_g]
+    x_g[, fixed_g] <- rep(fix_x_g[fixed_g], each = nrow(x_g))
   }
 
   if (ppd_type == "percentiles") {
